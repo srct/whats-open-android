@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import srct.whatsopen.model.OpenTimes;
 
 
+// Deserializer for a nested Json object, OpenTimes
 public class OpenTimesDeserializer implements JsonDeserializer<OpenTimes> {
 
     @Override

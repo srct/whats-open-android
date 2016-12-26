@@ -7,6 +7,7 @@ import retrofit2.http.GET;
 
 import srct.whatsopen.model.Facility;
 
+// Interface for Retrofit's Http request
 public interface WhatsOpenService {
 
     @GET("schedules")

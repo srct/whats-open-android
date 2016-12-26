@@ -30,9 +30,41 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Get Realm singleton
         mRealm = Realm.getDefaultInstance();
 
+        // Get WhatsOpenClient singleton
         WhatsOpenService service = WhatsOpenClient.getInstance();
+        callWhatsOpenAPI(service);
+
+        // Set up view
+        mRecyclerView = ButterKnife.findById(this, R.id.rvFacilities);
+        setUpRecyclerView();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
+    }
+
+    // Handles set up for the Recycler View
+    private void setUpRecyclerView() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(new FacilityListAdapter(this,
+                mRealm.where(Facility.class).findAllAsync()));
+
+        // Speeds things up for static lists
+        mRecyclerView.setHasFixedSize(true);
+
+        // Adds dividers between items
+        mRecyclerView.addItemDecoration(new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+    }
+
+    // Gets a Call from the given Retrofit service, then asynchronously executes it
+    // On success, copies the resulting facility list to the Realm DB
+    private void callWhatsOpenAPI(WhatsOpenService service) {
         Call<List<Facility>> call = service.facilityList();
         call.enqueue(new Callback<List<Facility>>() {
             @Override
@@ -48,24 +80,6 @@ public class MainActivity extends AppCompatActivity {
                 // do some stuff
             }
         });
-
-        mRecyclerView = ButterKnife.findById(this, R.id.rvFacilities);
-        setUpRecyclerView();
-    }
-    
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mRealm.close();
-    }
-
-    private void setUpRecyclerView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(new FacilityListAdapter(this,
-                mRealm.where(Facility.class).findAllAsync()));
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
     }
 }
 

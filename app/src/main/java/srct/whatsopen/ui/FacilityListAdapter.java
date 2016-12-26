@@ -17,6 +17,10 @@ import io.realm.RealmRecyclerViewAdapter;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
 
+/**
+ * Basic RecyclerView boilerplate, with some added Realm stuff
+ */
+
 public class FacilityListAdapter extends
         RealmRecyclerViewAdapter<Facility, FacilityListAdapter.ViewHolder> {
 
@@ -46,6 +50,7 @@ public class FacilityListAdapter extends
         textView.setText(facility.getName());
     }
 
+    // Set up for the Recycler View cells
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.facility_name) TextView nameTextView;

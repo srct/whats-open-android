@@ -12,6 +12,7 @@ import io.realm.RealmList;
 import srct.whatsopen.model.OpenTimes;
 
 
+// Json Deserializer for a list of OpenTimes
 public class OpenTimesListDeserializer implements JsonDeserializer<RealmList<OpenTimes>> {
 
     @Override

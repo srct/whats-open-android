@@ -28,6 +28,7 @@ public class WhatsOpenClient {
     public WhatsOpenClient() {
     }
 
+    // Returns a singleton of WhatsOpenService
     public static WhatsOpenService getInstance() {
         if(mService == null) {
             synchronized (WhatsOpenClient.class) {
@@ -39,11 +40,13 @@ public class WhatsOpenClient {
         return mService;
     }
 
+    // Configures Retrofit's JSON parsing logic
     private synchronized static Retrofit getRetrofit() {
         if(sRetrofit == null) {
             synchronized(WhatsOpenClient.class) {
                 if(sRetrofit == null) {
                     Gson gson = new GsonBuilder()
+                            // Ensures Retrofit plays nicely with Realm
                             .setExclusionStrategies(new ExclusionStrategy() {
                                 @Override
                                 public boolean shouldSkipField(FieldAttributes f) {
