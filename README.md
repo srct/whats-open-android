@@ -27,6 +27,18 @@ To get started, you'll need the following installed:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 * [Android Studio](https://developer.android.com/studio/index.html)
 
+```bash
+git clone http://git.gmu.edu/srct/whats-open-android.git
+```
+
+That's about it. From there you can use Android Studio's built in VCS tools,
+or continue from the command line. 
+
+Some helpful links for using git:
+
+* [Within Android Studio](http://wii.logdown.com/posts/2013/11/15/android-studio-git-tutorial)
+* [General Git reference](http://gitref.org/)
+
 Modifying and Deploying Code
 ---
 
