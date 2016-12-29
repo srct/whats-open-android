@@ -28,7 +28,7 @@ To get started, you'll need the following installed:
 * [Android Studio](https://developer.android.com/studio/index.html)
 
 ```bash
-git clone http://git.gmu.edu/srct/whats-open-android.git
+git clone https://git.gmu.edu/srct/whats-open-android.git
 ```
 
 That's about it. From there you can use Android Studio's built in VCS tools,

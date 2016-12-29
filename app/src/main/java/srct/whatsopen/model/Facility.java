@@ -9,17 +9,23 @@ import io.realm.annotations.PrimaryKey;
 public class Facility extends RealmObject {
 
     @PrimaryKey
-    private String name;
+    @SerializedName("name")
+    private String mName;
+
+    @SerializedName("location")
+    private String mLocation;
+
+    @SerializedName("main_schedule")
+    private MainSchedule mMainSchedule;
 
     private boolean isFavorited;
-    private RealmList<OpenTimes> mOpenTimes;
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     public boolean isFavorited() {
@@ -30,11 +36,19 @@ public class Facility extends RealmObject {
         isFavorited = favorited;
     }
 
-    public RealmList<OpenTimes> getOpenTimes() {
-        return mOpenTimes;
+    public String getLocation() {
+        return mLocation;
     }
 
-    public void setOpenTimes(RealmList<OpenTimes> openTimes) {
-        this.mOpenTimes = openTimes;
+    public void setLocation(String location) {
+        mLocation = location;
+    }
+
+    public MainSchedule getMainSchedule() {
+        return mMainSchedule;
+    }
+
+    public void setMainSchedule(MainSchedule mainSchedule) {
+        mMainSchedule = mainSchedule;
     }
 }

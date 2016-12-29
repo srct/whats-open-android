@@ -16,8 +16,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import srct.whatsopen.R;
-import srct.whatsopen.service.WhatsOpenClient;
-import srct.whatsopen.service.WhatsOpenService;
+import srct.whatsopen.services.WhatsOpenClient;
+import srct.whatsopen.services.WhatsOpenService;
 import srct.whatsopen.model.Facility;
 
 public class MainActivity extends AppCompatActivity {
