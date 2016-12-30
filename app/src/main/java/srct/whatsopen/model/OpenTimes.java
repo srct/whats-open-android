@@ -5,6 +5,15 @@ import com.google.gson.annotations.SerializedName;
 import io.realm.RealmObject;
 
 public class OpenTimes extends RealmObject {
+    @Override
+    public String toString() {
+        return "OpenTimes{" +
+                "startDay=" + startDay +
+                ", endDay=" + endDay +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                '}';
+    }
 
     @SerializedName("start_day")
     private int startDay;
