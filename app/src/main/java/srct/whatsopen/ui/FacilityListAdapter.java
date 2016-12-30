@@ -12,10 +12,13 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import butterknife.OnClick;
 import io.realm.OrderedRealmCollection;
+import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.model.OpenTimes;
 
 /**
  * Basic RecyclerView boilerplate, with some added Realm stuff
@@ -45,6 +48,7 @@ public class FacilityListAdapter extends
     public void onBindViewHolder(ViewHolder holder, int position) {
         Facility facility = getData().get(position);
 
+        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
         holder.data = facility;
         TextView textView = holder.nameTextView;
         textView.setText(facility.getName());
@@ -61,6 +65,12 @@ public class FacilityListAdapter extends
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+
+        @OnClick(R.id.favorite_button)
+        public void setFavorite(ImageButton favoriteButton) {
+            // this works very weirdly when the view is scrolled down. not sure why
+            //favoriteButton.setImageResource(R.drawable.ic_star_black_24dp);
         }
     }
 }

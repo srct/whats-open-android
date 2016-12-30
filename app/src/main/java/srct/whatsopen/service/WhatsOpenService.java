@@ -1,4 +1,4 @@
-package srct.whatsopen.services;
+package srct.whatsopen.service;
 
 import java.util.List;
 

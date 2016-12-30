@@ -1,5 +1,7 @@
 package srct.whatsopen.ui;
 
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +18,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import srct.whatsopen.R;
-import srct.whatsopen.services.WhatsOpenClient;
-import srct.whatsopen.services.WhatsOpenService;
+import srct.whatsopen.service.WhatsOpenClient;
+import srct.whatsopen.service.WhatsOpenService;
 import srct.whatsopen.model.Facility;
 
 public class MainActivity extends AppCompatActivity {
@@ -58,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
 
         // Adds dividers between items
-        mRecyclerView.addItemDecoration(new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        Drawable dividerDrawable = ContextCompat.getDrawable(this, R.drawable.divider);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(dividerDrawable));
     }
 
     // Gets a Call from the given Retrofit service, then asynchronously executes it

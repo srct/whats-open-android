@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="facilityText">#757575</color>
+    <color name="facilityClosed">#E0E0E0</color>
+    <color name="facilityOpen">#FAFAFA</color>
 </resources>
