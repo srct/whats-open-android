@@ -70,16 +70,19 @@ public class FacilityListFragment extends android.support.v4.app.Fragment {
             case "Favorites":
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
+                              .equalTo("isFavorited", true)
                               .findAllSortedAsync("isOpen", Sort.DESCENDING)));
                 break;
             case "Open":
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
+                              .equalTo("isOpen", true)
                               .findAllSortedAsync("isOpen", Sort.DESCENDING)));
                 break;
             case "Closed":
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
+                              .equalTo("isOpen", false)
                               .findAllSortedAsync("isOpen", Sort.DESCENDING)));
                 break;
             default:
