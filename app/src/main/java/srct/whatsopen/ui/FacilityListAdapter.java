@@ -72,10 +72,10 @@ public class FacilityListAdapter extends
         }
 
         if(facility.isFavorited()) {
-            holder.favoriteButton.setImageResource(R.drawable.ic_star_black_24dp);
+            holder.favoriteButton.setImageResource(R.drawable.favorite_button_on_24dp);
         }
         else {
-            holder.favoriteButton.setImageResource(R.drawable.ic_star_border_black_24dp);
+            holder.favoriteButton.setImageResource(R.drawable.favorite_button_off_24dp);
         }
 
         holder.data = facility;
@@ -138,11 +138,11 @@ public class FacilityListAdapter extends
         public void setFavorite(ImageButton favoriteButton) {
 
             if(data.isFavorited()) {
-                favoriteButton.setImageResource(R.drawable.ic_star_border_black_24dp);
+                favoriteButton.setImageResource(R.drawable.favorite_button_off_24dp);
                 toggleFavoriteAsync(false);
             }
             else {
-                favoriteButton.setImageResource(R.drawable.ic_star_black_24dp);
+                favoriteButton.setImageResource(R.drawable.favorite_button_on_24dp);
                 toggleFavoriteAsync(true);
             }
         }

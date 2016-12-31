@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WhatsOpen.iml" filepath="$PROJECT_DIR$/WhatsOpen.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/whats-open-android.iml" filepath="$PROJECT_DIR$/whats-open-android.iml" />
     </modules>
   </component>
 </project>
