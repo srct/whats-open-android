@@ -32,7 +32,6 @@ import srct.whatsopen.model.OpenTimes;
 
 /**
  * Basic RecyclerView boilerplate, with some added Realm stuff
- * Also contains a bit of logic for figuring out What's Open
  */
 
 public class FacilityListAdapter extends

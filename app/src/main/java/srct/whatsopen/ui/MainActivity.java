@@ -4,10 +4,14 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
+import com.astuetz.PagerSlidingTabStrip;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,29 +53,19 @@ public class MainActivity extends AppCompatActivity {
         WhatsOpenService service = WhatsOpenClient.getInstance();
         callWhatsOpenAPI(service);
 
-        // Set up view
-        mRecyclerView = ButterKnife.findById(this, R.id.rvFacilities);
-        setUpRecyclerView();
+        // Get the ViewPager and set its PagerAdapter
+        ViewPager viewPager = ButterKnife.findById(this, R.id.view_pager);
+        viewPager.setAdapter(new FacilityListFragmentPagerAdapter(getSupportFragmentManager()));
+
+        // Now give the TabStrip the ViewPager
+        PagerSlidingTabStrip tabStrip = ButterKnife.findById(this, R.id.tabs);
+        tabStrip.setViewPager(viewPager);
     }
     
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mRealm.close();
-    }
-
-    // Handles set up for the Recycler View
-    private void setUpRecyclerView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(new FacilityListAdapter(this,
-                mRealm.where(Facility.class).findAllSortedAsync("isOpen", Sort.DESCENDING)));
-
-        // Speeds things up for static lists
-        mRecyclerView.setHasFixedSize(true);
-
-        // Adds dividers between items
-        Drawable dividerDrawable = ContextCompat.getDrawable(this, R.drawable.divider);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(dividerDrawable));
     }
 
     // Gets a Call from the given Retrofit service, then asynchronously executes it
