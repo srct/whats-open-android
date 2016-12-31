@@ -1,6 +1,8 @@
 package srct.whatsopen.ui;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -67,11 +69,19 @@ public class MainActivity extends AppCompatActivity {
     // Gets a Call from the given Retrofit service, then asynchronously executes it
     // On success, copies the resulting facility list to the Realm DB
     private void callWhatsOpenAPI(WhatsOpenService service) {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         Call<List<Facility>> call = service.facilityList();
+
         call.enqueue(new Callback<List<Facility>>() {
             @Override
             public void onResponse(Call<List<Facility>> call, Response<List<Facility>> response) {
                 List<Facility> facilities = response.body();
+
+                // Query SharedReferences for each Facility's favorite status. defaults to false
+                for(Facility facility : facilities) {
+                    facility.setFavorited(pref.getBoolean(facility.getName(), false));
+                }
+
                 mRealm.beginTransaction();
                 mRealm.copyToRealmOrUpdate(facilities);
                 mRealm.commitTransaction();

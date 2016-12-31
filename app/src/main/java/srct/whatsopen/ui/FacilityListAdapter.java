@@ -2,9 +2,10 @@ package srct.whatsopen.ui;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmAsyncTask;
 import io.realm.RealmList;
-import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 import srct.whatsopen.R;
@@ -39,8 +38,6 @@ import srct.whatsopen.model.OpenTimes;
 public class FacilityListAdapter extends
         RealmRecyclerViewAdapter<Facility, FacilityListAdapter.ViewHolder> {
 
-    Context mContext;
-
     public FacilityListAdapter(Context context,
                                OrderedRealmCollection<Facility> data) {
 
@@ -49,7 +46,7 @@ public class FacilityListAdapter extends
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        mContext = parent.getContext();
+        Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View facilityView = inflater.inflate(R.layout.item_facility, parent, false);
@@ -68,10 +65,10 @@ public class FacilityListAdapter extends
         if(isOpen) {
             // set the RV cell to be highlighted
             holder.itemView.setBackgroundColor(ContextCompat
-                    .getColor(mContext, R.color.facilityOpen));
+                    .getColor(context, R.color.facilityOpen));
         } else {
             holder.itemView.setBackgroundColor(ContextCompat
-                    .getColor(mContext, R.color.facilityClosed));
+                    .getColor(context, R.color.facilityClosed));
         }
 
         if(facility.isFavorited()) {
@@ -150,10 +147,14 @@ public class FacilityListAdapter extends
             }
         }
 
-        // Asynchronously updates the favorite status
-        // Would block the favorite button redrawing otherwise
+        // Asynchronously updates the Realm object's favorite status
+        // and updates the favorite status in SharedPreferences
+        // Would block the favorite button redrawing if done on the UI thread
         void toggleFavoriteAsync(final boolean status) {
             Realm realm = Realm.getDefaultInstance();
+
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+            final SharedPreferences.Editor editor = pref.edit();
 
             final String facilityName = data.getName();
             realm.executeTransactionAsync(new Realm.Transaction() {
@@ -164,6 +165,8 @@ public class FacilityListAdapter extends
                             .equalTo("mName", facilityName).findFirst();
 
                     facility.setFavorited(status);
+                    editor.putBoolean(facilityName, status);
+                    editor.apply();
                 }
             }, null, null);
 
