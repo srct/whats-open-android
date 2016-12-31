@@ -21,6 +21,8 @@ import butterknife.ButterKnife;
 
 import butterknife.OnClick;
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
@@ -31,6 +33,7 @@ import srct.whatsopen.model.OpenTimes;
 
 /**
  * Basic RecyclerView boilerplate, with some added Realm stuff
+ * Also contains a bit of logic for figuring out What's Open
  */
 
 public class FacilityListAdapter extends
@@ -66,6 +69,16 @@ public class FacilityListAdapter extends
             // set the RV cell to be highlighted
             holder.itemView.setBackgroundColor(ContextCompat
                     .getColor(mContext, R.color.facilityOpen));
+        } else {
+            holder.itemView.setBackgroundColor(ContextCompat
+                    .getColor(mContext, R.color.facilityClosed));
+        }
+
+        if(facility.isFavorited()) {
+            holder.favoriteButton.setImageResource(R.drawable.ic_star_black_24dp);
+        }
+        else {
+            holder.favoriteButton.setImageResource(R.drawable.ic_star_border_black_24dp);
         }
 
         holder.data = facility;
@@ -73,6 +86,7 @@ public class FacilityListAdapter extends
         textView.setText(facility.getName());
     }
 
+    // Uses the device time to determine which facilities should be open
     private boolean getOpenStatus(RealmList<OpenTimes> openTimesList) {
         Calendar now = Calendar.getInstance();
 
@@ -122,9 +136,38 @@ public class FacilityListAdapter extends
             ButterKnife.bind(this, itemView);
         }
 
+        // toggles favorite status
         @OnClick(R.id.favorite_button)
         public void setFavorite(ImageButton favoriteButton) {
-            favoriteButton.setImageResource(R.drawable.ic_star_black_24dp);
+
+            if(data.isFavorited()) {
+                favoriteButton.setImageResource(R.drawable.ic_star_border_black_24dp);
+                toggleFavoriteAsync(false);
+            }
+            else {
+                favoriteButton.setImageResource(R.drawable.ic_star_black_24dp);
+                toggleFavoriteAsync(true);
+            }
+        }
+
+        // Asynchronously updates the favorite status
+        // Would block the favorite button redrawing otherwise
+        void toggleFavoriteAsync(final boolean status) {
+            Realm realm = Realm.getDefaultInstance();
+
+            final String facilityName = data.getName();
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm bgRealm) {
+                    // have to requery for the object as it was created on a separate thread
+                    Facility facility = bgRealm.where(Facility.class)
+                            .equalTo("mName", facilityName).findFirst();
+
+                    facility.setFavorited(status);
+                }
+            }, null, null);
+
+            realm.close();
         }
     }
 }
