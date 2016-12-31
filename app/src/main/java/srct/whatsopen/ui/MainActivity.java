@@ -9,17 +9,25 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
 
 import io.realm.Realm;
 
+import io.realm.RealmList;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import srct.whatsopen.R;
+import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.service.WhatsOpenClient;
 import srct.whatsopen.service.WhatsOpenService;
 import srct.whatsopen.model.Facility;
@@ -56,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUpRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(new FacilityListAdapter(this,
-                mRealm.where(Facility.class).findAllAsync()));
+                mRealm.where(Facility.class).findAllSortedAsync("isOpen", Sort.DESCENDING)));
 
         // Speeds things up for static lists
         mRecyclerView.setHasFixedSize(true);
@@ -79,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Query SharedReferences for each Facility's favorite status. defaults to false
                 for(Facility facility : facilities) {
+                    facility.setOpen(getOpenStatus(facility));
                     facility.setFavorited(pref.getBoolean(facility.getName(), false));
                 }
 
@@ -92,6 +101,42 @@ public class MainActivity extends AppCompatActivity {
                 // do some stuff
             }
         });
+    }
+
+    // Uses the device time to determine which facilities should be open
+    private boolean getOpenStatus(Facility facility) {
+        Calendar now = Calendar.getInstance();
+        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
+
+        // have to mess with the current day value, as Calender.DAY_OF_WEEK
+        // starts with Saturday as 1 and the Whats Open Api starts with Monday
+        // at 0, for some reason.
+        int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
+        OpenTimes currentOpenTimes = null;
+
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() == currentDay || o.getEndDay() == currentDay)
+                currentOpenTimes = o;
+        }
+
+        if(currentOpenTimes == null)
+            return false;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
+        try {
+            Date startTime = sdf.parse(currentOpenTimes.getStartTime());
+            Date endTime = sdf.parse(currentOpenTimes.getEndTime());
+            // have to parse it from date to string to date. how fun
+            Date currentTime = sdf.parse(sdf.format(now.getTime()));
+
+            if(currentTime.compareTo(startTime) > 0 && currentTime.compareTo(endTime) < 0)
+                return true;
+            else
+                return false;
+        } catch (ParseException pe) {
+            return false;
+        }
     }
 }
 

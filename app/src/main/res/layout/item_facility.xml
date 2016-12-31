@@ -8,19 +8,29 @@
               android:background="@color/facilityClosed"
               android:elevation="2dp">
 
-    <TextView android:id="@+id/facility_name"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:textColor="@color/facilityText"
-              android:paddingLeft="10dp"
-              android:layout_weight="1"/>
-    <ImageButton android:id="@+id/favorite_button"
-                 android:layout_width="wrap_content"
-                 android:layout_height="match_parent"
-                 android:src="@drawable/favorite_button_off_24dp"
-                 android:background="#00ffffff"
-                 android:scaleType="fitCenter"
-                 android:elevation="2dp"
-                 android:paddingLeft="16dp"
-                 android:paddingRight="16dp"/>
+    <RelativeLayout android:id="@+id/text_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView android:id="@+id/facility_name"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textColor="@color/facilityText"
+                  android:paddingLeft="10dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <ImageButton android:id="@+id/favorite_button"
+                     android:layout_width="wrap_content"
+                     android:layout_height="match_parent"
+                     android:src="@drawable/favorite_button_off_24dp"
+                     android:background="#00ffffff"
+                     android:elevation="2dp"
+                     android:paddingLeft="16dp"
+                     android:paddingRight="16dp"/>
+    </RelativeLayout>
 </LinearLayout>

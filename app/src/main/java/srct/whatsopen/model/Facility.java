@@ -18,7 +18,16 @@ public class Facility extends RealmObject {
     @SerializedName("main_schedule")
     private MainSchedule mMainSchedule;
 
+    private boolean isOpen;
     private boolean isFavorited;
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
 
     public String getName() {
         return mName;
