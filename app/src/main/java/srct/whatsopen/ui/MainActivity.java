@@ -1,13 +1,13 @@
 package srct.whatsopen.ui;
 
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import com.astuetz.PagerSlidingTabStrip;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,8 +20,6 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 
 import io.realm.RealmList;
-import io.realm.RealmResults;
-import io.realm.Sort;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,6 +29,7 @@ import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.service.WhatsOpenClient;
 import srct.whatsopen.service.WhatsOpenService;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.ui.adapters.FacilityListFragmentPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,9 +48,16 @@ public class MainActivity extends AppCompatActivity {
         WhatsOpenService service = WhatsOpenClient.getInstance();
         callWhatsOpenAPI(service);
 
-        // Set up view
-        mRecyclerView = ButterKnife.findById(this, R.id.rvFacilities);
-        setUpRecyclerView();
+        // Get the ViewPager and set its PagerAdapter
+        ViewPager viewPager = ButterKnife.findById(this, R.id.view_pager);
+        viewPager.setAdapter(new FacilityListFragmentPagerAdapter(getSupportFragmentManager()));
+
+        // Now give the TabStrip the ViewPager
+        PagerSlidingTabStrip tabStrip = ButterKnife.findById(this, R.id.tabs);
+        tabStrip.setTabPaddingLeftRight(0);
+        tabStrip.setViewPager(viewPager);
+
+        viewPager.setCurrentItem(1);
     }
     
     @Override
@@ -60,19 +66,18 @@ public class MainActivity extends AppCompatActivity {
         mRealm.close();
     }
 
-    // Handles set up for the Recycler View
-    private void setUpRecyclerView() {
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(new FacilityListAdapter(this,
-                mRealm.where(Facility.class).findAllSortedAsync("isOpen", Sort.DESCENDING)));
+    // does not work currently
+    /*
+    private void setDefaultTab(ViewPager viewPager) {
+        RealmResults<Facility> results = mRealm.where(Facility.class).equalTo("isFavorited", true)
+                .findAllAsync();
 
-        // Speeds things up for static lists
-        mRecyclerView.setHasFixedSize(true);
-
-        // Adds dividers between items
-        Drawable dividerDrawable = ContextCompat.getDrawable(this, R.drawable.divider);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(dividerDrawable));
+        if(results.size() == 0)
+            viewPager.setCurrentItem(1);
+        else
+            viewPager.setCurrentItem(0);
     }
+    */
 
     // Gets a Call from the given Retrofit service, then asynchronously executes it
     // On success, copies the resulting facility list to the Realm DB

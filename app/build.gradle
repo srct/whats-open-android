@@ -26,6 +26,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'io.realm:android-adapters:1.4.0'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
