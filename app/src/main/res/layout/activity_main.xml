@@ -12,6 +12,9 @@
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tabs"
         app:pstsShouldExpand="true"
+        app:pstsIndicatorColor="@color/colorPrimary"
+        app:pstsIndicatorHeight="6dp"
+        app:pstsTabBackground="@drawable/tab_button_bg"
         android:layout_width="match_parent"
         android:layout_height="48dp"/>
 

@@ -67,7 +67,7 @@ public class FacilityListFragment extends android.support.v4.app.Fragment {
                         mRealm.where(Facility.class)
                               .findAllSortedAsync("isOpen", Sort.DESCENDING)));
                 break;
-            case "Fav":
+            case "Favorites":
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
                               .equalTo("isFavorited", true)

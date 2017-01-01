@@ -1,15 +1,11 @@
 package srct.whatsopen.ui;
 
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -24,8 +20,6 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 
 import io.realm.RealmList;
-import io.realm.RealmResults;
-import io.realm.Sort;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,6 +29,7 @@ import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.service.WhatsOpenClient;
 import srct.whatsopen.service.WhatsOpenService;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.ui.adapters.FacilityListFragmentPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Now give the TabStrip the ViewPager
         PagerSlidingTabStrip tabStrip = ButterKnife.findById(this, R.id.tabs);
+        tabStrip.setTabPaddingLeftRight(0);
         tabStrip.setViewPager(viewPager);
+
+        viewPager.setCurrentItem(1);
     }
     
     @Override
@@ -67,6 +65,19 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         mRealm.close();
     }
+
+    // does not work currently
+    /*
+    private void setDefaultTab(ViewPager viewPager) {
+        RealmResults<Facility> results = mRealm.where(Facility.class).equalTo("isFavorited", true)
+                .findAllAsync();
+
+        if(results.size() == 0)
+            viewPager.setCurrentItem(1);
+        else
+            viewPager.setCurrentItem(0);
+    }
+    */
 
     // Gets a Call from the given Retrofit service, then asynchronously executes it
     // On success, copies the resulting facility list to the Realm DB

@@ -4,13 +4,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import srct.whatsopen.ui.FacilityListFragment;
+import srct.whatsopen.ui.fragments.FacilityListFragment;
 
 
 public class FacilityListFragmentPagerAdapter extends FragmentPagerAdapter {
 
     final int PAGE_COUNT = 4;
-    private String tabTitles[] = new String[] {"Fav", "All", "Open", "Closed"};
+    private String tabTitles[] = new String[] {"Favorites", "All", "Open", "Closed"};
 
     public FacilityListFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
