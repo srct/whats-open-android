@@ -1,9 +1,7 @@
-package srct.whatsopen.ui;
+package srct.whatsopen.ui.fragments;
 
-import android.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +14,8 @@ import io.realm.Realm;
 import io.realm.Sort;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.ui.DividerItemDecoration;
+import srct.whatsopen.ui.adapters.FacilityListAdapter;
 
 
 public class FacilityListFragment extends android.support.v4.app.Fragment {
@@ -67,7 +67,7 @@ public class FacilityListFragment extends android.support.v4.app.Fragment {
                         mRealm.where(Facility.class)
                               .findAllSortedAsync("isOpen", Sort.DESCENDING)));
                 break;
-            case "Favorites":
+            case "Fav":
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
                               .equalTo("isFavorited", true)
