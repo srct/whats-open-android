@@ -2,6 +2,7 @@ package srct.whatsopen.ui.fragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,11 +51,15 @@ public class FacilityListFragment extends android.support.v4.app.Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_facility, container, false);
+        return inflater.inflate(R.layout.fragment_facility, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         mRecyclerView = ButterKnife.findById(view, R.id.rvFacilities);
         setUpRecyclerView(view);
-
-        return view;
     }
 
     // Handles set up for the Recycler View

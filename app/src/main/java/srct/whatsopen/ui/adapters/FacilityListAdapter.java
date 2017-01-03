@@ -2,6 +2,7 @@ package srct.whatsopen.ui.adapters;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,6 +22,8 @@ import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.ui.activities.MainActivity;
+import srct.whatsopen.ui.activities.DetailActivity;
 
 /**
  * Basic RecyclerView boilerplate, with some added Realm stuff
@@ -85,11 +87,13 @@ public class FacilityListAdapter extends
             ButterKnife.bind(this, itemView);
         }
 
-        // should expand to the facility's detail view
+        // expands to the facility's detail view
         @OnClick(R.id.text_layout)
         public void expandFacilityView() {
-            String name = data.getName();
-            Toast.makeText(context, name + " clicked", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(context, DetailActivity.class);
+            i.putExtra("name", data.getName());
+
+            context.startActivity(i);
         }
 
         // toggles favorite status
