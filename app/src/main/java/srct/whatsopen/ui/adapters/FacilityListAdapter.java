@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,7 +80,7 @@ public class FacilityListAdapter extends
 
         public Facility data;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -87,6 +88,8 @@ public class FacilityListAdapter extends
         // should expand to the facility's detail view
         @OnClick(R.id.text_layout)
         public void expandFacilityView() {
+            String name = data.getName();
+            Toast.makeText(context, name + " clicked", Toast.LENGTH_SHORT).show();
         }
 
         // toggles favorite status

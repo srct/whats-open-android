@@ -33,7 +33,6 @@ import srct.whatsopen.ui.adapters.FacilityListFragmentPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Realm mRealm;
     private RecyclerView mRecyclerView;
 
     @Override
@@ -41,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Get Realm singleton
-        mRealm = Realm.getDefaultInstance();
 
         // Get WhatsOpenClient singleton
         WhatsOpenService service = WhatsOpenClient.getInstance();
@@ -63,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mRealm.close();
+
     }
 
     // does not work currently
@@ -82,7 +79,10 @@ public class MainActivity extends AppCompatActivity {
     // Gets a Call from the given Retrofit service, then asynchronously executes it
     // On success, copies the resulting facility list to the Realm DB
     private void callWhatsOpenAPI(WhatsOpenService service) {
+        // Get Realm and SharedPreference instances
+        final Realm realm = Realm.getDefaultInstance();
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+
         Call<List<Facility>> call = service.facilityList();
 
         call.enqueue(new Callback<List<Facility>>() {
@@ -90,20 +90,23 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<Facility>> call, Response<List<Facility>> response) {
                 List<Facility> facilities = response.body();
 
-                // Query SharedReferences for each Facility's favorite status. defaults to false
                 for(Facility facility : facilities) {
-                    facility.setOpen(getOpenStatus(facility));
+                    // Query SharedReferences for each Facility's favorite status. defaults to false
                     facility.setFavorited(pref.getBoolean(facility.getName(), false));
+                    facility.setOpen(getOpenStatus(facility));
                 }
 
-                mRealm.beginTransaction();
-                mRealm.copyToRealmOrUpdate(facilities);
-                mRealm.commitTransaction();
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(facilities);
+                realm.commitTransaction();
+
+                realm.close();
             }
 
             @Override
             public void onFailure(Call<List<Facility>> call, Throwable t) {
                 // do some stuff
+                realm.close();
             }
         });
     }
@@ -114,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
         RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
 
         // have to mess with the current day value, as Calender.DAY_OF_WEEK
-        // starts with Saturday as 1 and the Whats Open Api starts with Monday
-        // at 0, for some reason.
+        // starts with Sunday as 1 and the Whats Open Api starts with Monday at 0
         int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
         OpenTimes currentOpenTimes = null;
 
