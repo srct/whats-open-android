@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
             else
                 return false;
         } catch (ParseException pe) {
+            pe.printStackTrace();
             return false;
         }
     }
