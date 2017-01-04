@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -42,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Configure toolbar
+        Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         // Get WhatsOpenClient singleton
         WhatsOpenService service = WhatsOpenClient.getInstance();
         callWhatsOpenAPI(service);
@@ -56,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
         tabStrip.setViewPager(viewPager);
 
         viewPager.setCurrentItem(1);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
     
     // does not work currently

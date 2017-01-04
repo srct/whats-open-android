@@ -22,7 +22,6 @@ import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
-import srct.whatsopen.ui.activities.MainActivity;
 import srct.whatsopen.ui.activities.DetailActivity;
 
 /**
@@ -63,10 +62,10 @@ public class FacilityListAdapter extends
         }
 
         if(facility.isFavorited()) {
-            holder.favoriteButton.setImageResource(R.drawable.favorite_button_on_24dp);
+            holder.favoriteButton.setImageResource(R.drawable.ic_fav_button_on_24dp);
         }
         else {
-            holder.favoriteButton.setImageResource(R.drawable.favorite_button_off_24dp);
+            holder.favoriteButton.setImageResource(R.drawable.ic_fav_button_off_24dp);
         }
 
         holder.data = facility;
@@ -74,11 +73,41 @@ public class FacilityListAdapter extends
         textView.setText(facility.getName());
     }
 
+    // Asynchronously updates the Realm object's favorite status
+    // and updates the favorite status in SharedPreferences
+    // Would block the favorite button redrawing if done on the UI thread
+    public static void toggleFavoriteAsync(Context context, Facility facility,
+                                           final boolean status) {
+
+        Realm realm = Realm.getDefaultInstance();
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences.Editor editor = pref.edit();
+
+        final String facilityName = facility.getName();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+                                  @Override
+                                  public void execute(Realm bgRealm) {
+                // have to requery for the object as it was created on a separate thread
+                Facility facility = bgRealm.where(Facility.class)
+                        .equalTo("mName", facilityName).findFirst();
+
+                facility.setFavorited(status);
+                editor.putBoolean(facilityName, status);
+                editor.apply();
+            }
+        }, null, null);
+
+        realm.close();
+    }
+
     // Set up for the Recycler View cells
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.facility_name) TextView nameTextView;
-        @BindView(R.id.favorite_button) ImageButton favoriteButton;
+        @BindView(R.id.facility_name)
+        TextView nameTextView;
+        @BindView(R.id.favorite_button)
+        ImageButton favoriteButton;
 
         public Facility data;
 
@@ -87,7 +116,7 @@ public class FacilityListAdapter extends
             ButterKnife.bind(this, itemView);
         }
 
-        // expands to the facility's detail view
+        // transitions to the facility's detail view
         @OnClick(R.id.text_layout)
         public void expandFacilityView() {
             Intent i = new Intent(context, DetailActivity.class);
@@ -99,41 +128,13 @@ public class FacilityListAdapter extends
         // toggles favorite status
         @OnClick(R.id.favorite_button)
         public void setFavorite(ImageButton favoriteButton) {
-
-            if(data.isFavorited()) {
-                favoriteButton.setImageResource(R.drawable.favorite_button_off_24dp);
-                toggleFavoriteAsync(false);
+            if (data.isFavorited()) {
+                favoriteButton.setImageResource(R.drawable.ic_fav_button_off_24dp);
+                toggleFavoriteAsync(context, data, false);
+            } else {
+                favoriteButton.setImageResource(R.drawable.ic_fav_button_on_24dp);
+                toggleFavoriteAsync(context, data, true);
             }
-            else {
-                favoriteButton.setImageResource(R.drawable.favorite_button_on_24dp);
-                toggleFavoriteAsync(true);
-            }
-        }
-
-        // Asynchronously updates the Realm object's favorite status
-        // and updates the favorite status in SharedPreferences
-        // Would block the favorite button redrawing if done on the UI thread
-        void toggleFavoriteAsync(final boolean status) {
-            Realm realm = Realm.getDefaultInstance();
-
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-            final SharedPreferences.Editor editor = pref.edit();
-
-            final String facilityName = data.getName();
-            realm.executeTransactionAsync(new Realm.Transaction() {
-                @Override
-                public void execute(Realm bgRealm) {
-                    // have to requery for the object as it was created on a separate thread
-                    Facility facility = bgRealm.where(Facility.class)
-                            .equalTo("mName", facilityName).findFirst();
-
-                    facility.setFavorited(status);
-                    editor.putBoolean(facilityName, status);
-                    editor.apply();
-                }
-            }, null, null);
-
-            realm.close();
         }
     }
 }
