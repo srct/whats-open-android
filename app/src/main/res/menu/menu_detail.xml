@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/miFavorite"
+        android:icon="@drawable/ic_fav_button_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="Favorite"/>
+
+    <item
+        android:id="@+id/miOptions"
+        android:icon="@drawable/ic_options_24dp"
+        app:showAsAction="ifRoom"
+        android:title="Options"/>
+</menu>
