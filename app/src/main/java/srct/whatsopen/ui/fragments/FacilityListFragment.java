@@ -15,7 +15,7 @@ import io.realm.Realm;
 import io.realm.Sort;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
-import srct.whatsopen.ui.DividerItemDecoration;
+import srct.whatsopen.ui.decorations.DividerItemDecoration;
 import srct.whatsopen.ui.adapters.FacilityListAdapter;
 
 

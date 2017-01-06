@@ -3,8 +3,6 @@ package srct.whatsopen.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,11 +16,12 @@ import butterknife.ButterKnife;
 
 import butterknife.OnClick;
 import io.realm.OrderedRealmCollection;
-import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.ui.FacilityView;
 import srct.whatsopen.ui.activities.DetailActivity;
+import srct.whatsopen.ui.presenters.FacilityPresenter;
 
 /**
  * Basic RecyclerView boilerplate, with some added Realm stuff
@@ -68,74 +67,61 @@ public class FacilityListAdapter extends
             holder.favoriteButton.setImageResource(R.drawable.ic_fav_button_off_24dp);
         }
 
-        holder.data = facility;
+        holder.setData(facility);
         TextView textView = holder.nameTextView;
         textView.setText(facility.getName());
     }
 
-    // Asynchronously updates the Realm object's favorite status
-    // and updates the favorite status in SharedPreferences
-    // Would block the favorite button redrawing if done on the UI thread
-    public static void toggleFavoriteAsync(Context context, Facility facility,
-                                           final boolean status) {
-
-        Realm realm = Realm.getDefaultInstance();
-
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        final SharedPreferences.Editor editor = pref.edit();
-
-        final String facilityName = facility.getName();
-        realm.executeTransactionAsync(new Realm.Transaction() {
-                                  @Override
-                                  public void execute(Realm bgRealm) {
-                // have to requery for the object as it was created on a separate thread
-                Facility facility = bgRealm.where(Facility.class)
-                        .equalTo("mName", facilityName).findFirst();
-
-                facility.setFavorited(status);
-                editor.putBoolean(facilityName, status);
-                editor.apply();
-            }
-        }, null, null);
-
-        realm.close();
-    }
-
     // Set up for the Recycler View cells
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements FacilityView {
 
         @BindView(R.id.facility_name)
         TextView nameTextView;
         @BindView(R.id.favorite_button)
         ImageButton favoriteButton;
 
-        public Facility data;
+        FacilityPresenter mPresenter;
+        Facility data;
 
         public ViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
+        public void setData(Facility facility) {
+            data = facility;
+
+            // Set up presenter
+            mPresenter = new FacilityPresenter();
+            mPresenter.attachView(this, data);
+        }
+
         // transitions to the facility's detail view
         @OnClick(R.id.text_layout)
         public void expandFacilityView() {
-            Intent i = new Intent(context, DetailActivity.class);
-            i.putExtra("name", data.getName());
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra("name", data.getName());
 
-            context.startActivity(i);
+            context.startActivity(intent);
         }
 
         // toggles favorite status
         @OnClick(R.id.favorite_button)
-        public void setFavorite(ImageButton favoriteButton) {
-            if (data.isFavorited()) {
+        public void setFavorite() {
+            mPresenter.toggleFavorite();
+        }
+
+        @Override
+        public void changeFavoriteIcon(boolean isFavorited) {
+            if (isFavorited)
                 favoriteButton.setImageResource(R.drawable.ic_fav_button_off_24dp);
-                toggleFavoriteAsync(context, data, false);
-            } else {
+            else
                 favoriteButton.setImageResource(R.drawable.ic_fav_button_on_24dp);
-                toggleFavoriteAsync(context, data, true);
-            }
+        }
+
+        @Override
+        public Context getContext() {
+            return context;
         }
     }
 }
-
