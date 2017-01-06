@@ -25,6 +25,11 @@ public class FacilityPresenter {
         mFacility = facility;
     }
 
+    public void detachView() {
+        mFacilityView = null;
+        mFacility = null;
+    }
+
     // Asynchronously updates the Realm object's favorite status
     // and updates the favorite status in SharedPreferences
     public void toggleFavorite() {

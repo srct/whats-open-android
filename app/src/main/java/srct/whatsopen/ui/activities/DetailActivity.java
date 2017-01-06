@@ -49,6 +49,12 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
     }
 
     @Override
+    protected void onDestroy() {
+        mPresenter.detachView();
+        super.onDestroy();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detail, menu);
         mFavoriteMenuItem = menu.findItem(R.id.miFavorite);
