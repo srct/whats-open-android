@@ -1,0 +1,79 @@
+package srct.whatsopen.ui.activities;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
+import com.danielstone.materialaboutlibrary.BuildConfig;
+import com.danielstone.materialaboutlibrary.MaterialAboutActivity;
+import com.danielstone.materialaboutlibrary.model.MaterialAboutActionItem;
+import com.danielstone.materialaboutlibrary.model.MaterialAboutCard;
+import com.danielstone.materialaboutlibrary.model.MaterialAboutList;
+import com.danielstone.materialaboutlibrary.model.MaterialAboutTitleItem;
+
+import srct.whatsopen.R;
+
+public class AboutActivity extends MaterialAboutActivity {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected MaterialAboutList getMaterialAboutList() {
+        MaterialAboutCard.Builder appCardBuilder = new MaterialAboutCard.Builder();
+
+        appCardBuilder.addItem(new MaterialAboutTitleItem.Builder()
+                .text("What's Open")
+                .build());
+        appCardBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text("Version")
+                .subText("0.1")
+                .icon(R.drawable.ic_info_outline_black_24dp)
+                .build());
+
+        MaterialAboutCard.Builder contributorsCardBuilder = new MaterialAboutCard.Builder();
+        contributorsCardBuilder.title("Contributors");
+        contributorsCardBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text("Version 1.0")
+                .subText("Robert Hitt")
+                .build());
+
+        MaterialAboutCard.Builder aboutCardBuilder = new MaterialAboutCard.Builder();
+        aboutCardBuilder.title("About");
+        aboutCardBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text("What's Open is a GMU SRCT project")
+                .subText("srct.gmu.edu")
+                .setOnClickListener(new MaterialAboutActionItem.OnClickListener() {
+                    @Override
+                    public void onClick() {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse("https://srct.gmu.edu/"));
+                        startActivity(i);
+                    }
+                })
+                .build());
+        aboutCardBuilder.addItem(new MaterialAboutActionItem.Builder()
+                .text("Project Repository")
+                .subText("git.gmu.edu/srct/whats-open-android")
+                .setOnClickListener(new MaterialAboutActionItem.OnClickListener() {
+                    @Override
+                    public void onClick() {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse("https://git.gmu.edu/srct/whats-open-android"));
+                        startActivity(i);
+                    }
+                })
+                .build());
+
+        return new MaterialAboutList(appCardBuilder.build(), contributorsCardBuilder.build(),
+                aboutCardBuilder.build());
+    }
+
+    @Override
+    protected CharSequence getActivityTitle() {
+        return "About";
+    }
+}

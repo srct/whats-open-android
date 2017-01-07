@@ -1,5 +1,6 @@
 package srct.whatsopen.ui.activities;
 
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -68,9 +69,16 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 return true;
             case R.id.action_about:
+                expandAboutActivity();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    // Opens the About page for the app
+    private void expandAboutActivity() {
+        Intent i = new Intent(this, AboutActivity.class);
+        startActivity(i);
     }
 }

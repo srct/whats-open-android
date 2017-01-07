@@ -75,8 +75,6 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
                 return true;
             case R.id.action_settings:
                 return true;
-            case R.id.action_about:
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
