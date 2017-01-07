@@ -57,12 +57,9 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detail, menu);
-        mFavoriteMenuItem = menu.findItem(R.id.miFavorite);
+        mFavoriteMenuItem = menu.findItem(R.id.action_favorite);
 
-        if(mFacility.isFavorited())
-            mFavoriteMenuItem.setIcon(R.drawable.ic_fav_button_on_24dp);
-        else
-            mFavoriteMenuItem.setIcon(R.drawable.ic_fav_button_white_24dp);
+        changeFavoriteIcon(mFacility.isFavorited());
 
         return true;
     }
@@ -73,10 +70,12 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
             case R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
-            case R.id.miFavorite:
+            case R.id.action_favorite:
                 mPresenter.toggleFavorite();
                 return true;
-            case R.id.miOptions:
+            case R.id.action_settings:
+                return true;
+            case R.id.action_about:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
