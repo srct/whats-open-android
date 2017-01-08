@@ -38,6 +38,7 @@ public class AboutActivity extends MaterialAboutActivity {
         contributorsCardBuilder.title("Contributors");
         contributorsCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("Version 1.0")
+                .icon(R.drawable.ic_people_black_24dp)
                 .subText("Robert Hitt")
                 .build());
 
@@ -45,6 +46,7 @@ public class AboutActivity extends MaterialAboutActivity {
         aboutCardBuilder.title("About");
         aboutCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("What's Open is a GMU SRCT project")
+                .icon(R.drawable.ic_srct_logo)
                 .subText("srct.gmu.edu")
                 .setOnClickListener(new MaterialAboutActionItem.OnClickListener() {
                     @Override
@@ -57,6 +59,7 @@ public class AboutActivity extends MaterialAboutActivity {
                 .build());
         aboutCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("Project Repository")
+                .icon(R.drawable.ic_gitlab_logo)
                 .subText("git.gmu.edu/srct/whats-open-android")
                 .setOnClickListener(new MaterialAboutActionItem.OnClickListener() {
                     @Override
