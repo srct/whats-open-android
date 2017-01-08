@@ -33,12 +33,13 @@ public class MainPresenterUnitTest {
 
         mFacility = new Facility("The French Laundry", "Johnson Center",
                 mainSchedule, false, true);
+
+        now = Calendar.getInstance();
     }
 
     @Test
     public void testFacilityIsOpen() {
         // Set date
-        now = Calendar.getInstance();
         now.set(2017, 0, 9, 12, 0); // Monday, 1/9/2017, 12:00:00
 
         assertTrue(mPresenter.getOpenStatus(mFacility, now));
@@ -47,7 +48,6 @@ public class MainPresenterUnitTest {
     @Test
     public void testFacilityIsClosed() {
         // Set date
-        now = Calendar.getInstance();
         now.set(2017, 1, 10, 12, 0); // Tuesday, 1/10/2017, 12:00:00
 
         assertFalse(mPresenter.getOpenStatus(mFacility, now));

@@ -96,7 +96,7 @@ public class FacilityPresenter {
 
         // Else return the opening time of the next day
 
-        int nextDay = (currentDay + 1) % openTimesList.size();
+        int nextDay = findNextDay(openTimesList, currentDay);
         String nextDayStr = parseIntToDay(nextDay);
 
         String openingTime = openTimesList.get(nextDay).getStartTime();
@@ -105,6 +105,17 @@ public class FacilityPresenter {
         durationMessage = "Opens on " + nextDayStr + " at " + openingTime;
 
         return durationMessage;
+    }
+
+    // Returns the next open day in the list of OpenTimes
+    private int findNextDay(RealmList<OpenTimes> openTimesList, int current) {
+        int nextDay = openTimesList.first().getStartDay();
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() > current)
+                nextDay = o.getStartDay();
+        }
+
+        return nextDay;
     }
 
     // Parses 24 hour formatted time String to 12 hour formatted time String
