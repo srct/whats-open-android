@@ -7,6 +7,13 @@ import io.realm.RealmObject;
 
 public class MainSchedule extends RealmObject {
 
+    public MainSchedule(RealmList<OpenTimes> openTimesList) {
+        mOpenTimesList = openTimesList;
+    }
+
+    public MainSchedule() {
+    }
+
     @SerializedName("open_times")
     private RealmList<OpenTimes> mOpenTimesList;
 

@@ -18,22 +18,19 @@ import srct.whatsopen.ui.FacilityView;
 public class FacilityPresenter {
 
     private FacilityView mFacilityView;
-    private Facility mFacility;
 
     public void attachView(FacilityView view, Facility facility) {
         mFacilityView = view;
-        mFacility = facility;
     }
 
     public void detachView() {
         mFacilityView = null;
-        mFacility = null;
     }
 
     // Asynchronously updates the Realm object's favorite status
     // and updates the favorite status in SharedPreferences
-    public void toggleFavorite() {
-        final boolean status = !mFacility.isFavorited();
+    public void toggleFavorite(Facility facility) {
+        final boolean status = !facility.isFavorited();
         mFacilityView.changeFavoriteIcon(status);
 
         // Get Realm instance and SharedPreferences
@@ -43,15 +40,15 @@ public class FacilityPresenter {
 
         final SharedPreferences.Editor editor = pref.edit();
 
-        final String facilityName = mFacility.getName();
+        final String facilityName = facility.getName();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
                 // have to requery for the object as it was created on a separate thread
-                Facility facility = bgRealm.where(Facility.class)
+                Facility f = bgRealm.where(Facility.class)
                         .equalTo("mName", facilityName).findFirst();
 
-                facility.setFavorited(status);
+                f.setFavorited(status);
                 editor.putBoolean(facilityName, status);
                 editor.apply();
             }
@@ -61,9 +58,8 @@ public class FacilityPresenter {
     }
 
     // Finds the next time the facility closes or opens and returns it
-    public String getStatusDuration() {
-        Calendar now = Calendar.getInstance();
-        RealmList<OpenTimes> openTimesList = mFacility.getMainSchedule().getOpenTimesList();
+    public String getStatusDuration(Facility facility, Calendar now) {
+        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
 
         if(openTimesList.size() == 0)
             return "No open time on schedule";
@@ -71,7 +67,7 @@ public class FacilityPresenter {
         int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
         String durationMessage;
 
-        if(mFacility.isOpen()) {
+        if(facility.isOpen()) {
             String closingTime = openTimesList.get(currentDay).getEndTime();
             closingTime = parseTo12HourTime(closingTime);
             durationMessage = "Closes at " + closingTime;
@@ -146,8 +142,8 @@ public class FacilityPresenter {
     }
 
     // Parses the schedule into an HTML string
-    public String getSchedule() {
-        RealmList<OpenTimes> openTimesList = mFacility.getMainSchedule().getOpenTimesList();
+    public String getSchedule(Facility facility) {
+        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
 
         if(openTimesList.size() == 0)
            return "No schedule available";

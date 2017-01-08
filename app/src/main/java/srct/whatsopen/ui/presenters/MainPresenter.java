@@ -53,7 +53,7 @@ public class MainPresenter {
                 for(Facility facility : facilities) {
                     // Query SharedReferences for each Facility's favorite status. defaults to false
                     facility.setFavorited(pref.getBoolean(facility.getName(), false));
-                    facility.setOpen(getOpenStatus(facility));
+                    facility.setOpen(getOpenStatus(facility, Calendar.getInstance()));
                 }
 
                 realm.beginTransaction();
@@ -72,8 +72,7 @@ public class MainPresenter {
     }
 
     // Uses the device time to determine which facilities should be open
-    private boolean getOpenStatus(Facility facility) {
-        Calendar now = Calendar.getInstance();
+    public boolean getOpenStatus(Facility facility, Calendar now) {
         RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
 
         // have to mess with the current day value, as Calender.DAY_OF_WEEK

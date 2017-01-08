@@ -108,7 +108,7 @@ public class FacilityListAdapter extends
         // toggles favorite status
         @OnClick(R.id.favorite_button)
         public void setFavorite() {
-            mPresenter.toggleFavorite();
+            mPresenter.toggleFavorite(data);
         }
 
         @Override

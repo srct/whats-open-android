@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
@@ -71,7 +73,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
             case R.id.action_favorite:
-                mPresenter.toggleFavorite();
+                mPresenter.toggleFavorite(mFacility);
                 return true;
             case R.id.action_settings:
                 return true;
@@ -117,10 +119,11 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
         String statusText = mFacility.isOpen() ? "Open" : "Closed";
         openStatusTextView.setText(statusText);
 
-        openDurationTextView.setText(mPresenter.getStatusDuration());
+        openDurationTextView.setText(mPresenter.getStatusDuration(mFacility,
+                Calendar.getInstance()));
 
         locationTextView.setText(mFacility.getLocation());
 
-        scheduleTextView.setText(Html.fromHtml(mPresenter.getSchedule()));
+        scheduleTextView.setText(Html.fromHtml(mPresenter.getSchedule(mFacility)));
     }
 }

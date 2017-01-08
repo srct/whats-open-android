@@ -5,6 +5,17 @@ import com.google.gson.annotations.SerializedName;
 import io.realm.RealmObject;
 
 public class OpenTimes extends RealmObject {
+
+    public OpenTimes(int startDay, int endDay, String startTime, String endTime) {
+        this.startDay = startDay;
+        this.endDay = endDay;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public OpenTimes() {
+    }
+
     @Override
     public String toString() {
         return "OpenTimes{" +

@@ -8,6 +8,18 @@ import io.realm.annotations.PrimaryKey;
 
 public class Facility extends RealmObject {
 
+    public Facility(String name, String location, MainSchedule mainSchedule,
+                    boolean isOpen, boolean isFavorited) {
+        mName = name;
+        mLocation = location;
+        mMainSchedule = mainSchedule;
+        this.isOpen = isOpen;
+        this.isFavorited = isFavorited;
+    }
+
+    public Facility() {
+    }
+
     @PrimaryKey
     @SerializedName("name")
     private String mName;
