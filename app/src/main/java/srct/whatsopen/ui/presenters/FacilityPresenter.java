@@ -19,7 +19,7 @@ public class FacilityPresenter {
 
     private FacilityView mFacilityView;
 
-    public void attachView(FacilityView view, Facility facility) {
+    public void attachView(FacilityView view) {
         mFacilityView = view;
     }
 

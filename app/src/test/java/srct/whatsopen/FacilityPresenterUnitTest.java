@@ -1,5 +1,8 @@
 package srct.whatsopen;
 
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,6 +12,7 @@ import io.realm.RealmList;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.MainSchedule;
 import srct.whatsopen.model.OpenTimes;
+import srct.whatsopen.ui.FacilityView;
 import srct.whatsopen.ui.presenters.FacilityPresenter;
 
 import static org.junit.Assert.*;
@@ -90,5 +94,17 @@ public class FacilityPresenterUnitTest {
         String schedule = mPresenter.getSchedule(mFacility);
 
         assertEquals("No schedule available", schedule);
+    }
+
+
+    public class TestFacilityView extends AppCompatActivity implements FacilityView {
+        @Override
+        public Context getContext() {
+            return this;
+        }
+
+        @Override
+        public void changeFavoriteIcon(boolean favoriteStatus) {
+        }
     }
 }

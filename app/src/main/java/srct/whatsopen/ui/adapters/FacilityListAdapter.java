@@ -93,7 +93,7 @@ public class FacilityListAdapter extends
 
             // Set up presenter
             mPresenter = new FacilityPresenter();
-            mPresenter.attachView(this, data);
+            mPresenter.attachView(this);
         }
 
         // transitions to the facility's detail view

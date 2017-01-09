@@ -42,7 +42,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
 
         // Set up Presenter
         mPresenter = new FacilityPresenter();
-        mPresenter.attachView(this, mFacility);
+        mPresenter.attachView(this);
 
         // Set up layout
         ButterKnife.bind(this);
