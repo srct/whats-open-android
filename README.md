@@ -1,6 +1,8 @@
 What's Open
 ===
 
+[![build status](https://git.gmu.edu/srct/whats-open-android/badges/master/build.svg)](https://git.gmu.edu/srct/whats-open-android/commits/master)
+
 Simple Android app that gets data from the [What's Open API](https://whatsopen.gmu.edu/api/) and
 displays it in an (ostensibly) pretty way, with some Android-specific bells and whistles.
 
@@ -54,10 +56,10 @@ the Android SDK, ignoring lots of very helpful libraries (which are used often b
 To Do
 ---
 
-* Write tests
-* Make it look pretty
-* Add some Android stuff (notifications, widgets, etc)
-* Make it actually work
+* Expand offline functionality
+* Make app icon
+* Add notifications
+* Make a widget
 
 ## About Mason SRCT
 
