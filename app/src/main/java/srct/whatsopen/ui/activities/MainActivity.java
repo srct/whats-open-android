@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 
+import io.realm.Realm;
 import srct.whatsopen.R;
 import srct.whatsopen.ui.MainView;
 import srct.whatsopen.ui.presenters.MainPresenter;
@@ -25,7 +26,6 @@ import srct.whatsopen.ui.adapters.FacilityListFragmentPagerAdapter;
 public class MainActivity extends AppCompatActivity implements MainView {
 
     @BindView(R.id.progress_bar) CircularProgressBar mProgressBar;
-    @BindView(R.id.list_view) LinearLayout mListView;
 
     private MainPresenter mPresenter;
 
@@ -34,14 +34,16 @@ public class MainActivity extends AppCompatActivity implements MainView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Bind them views
         ButterKnife.bind(this);
 
         // Set up presenter
         mPresenter = new MainPresenter();
         mPresenter.attachView(this);
 
-        // Get facility data
-        mPresenter.loadFacilities();
+        // Get facility data if necessary
+        if(Realm.getDefaultInstance().isEmpty())
+            mPresenter.loadFacilities();
 
         // Configure toolbar
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);

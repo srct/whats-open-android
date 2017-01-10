@@ -28,9 +28,11 @@ import srct.whatsopen.ui.activities.MainActivity;
 public class MainPresenter {
 
     private MainActivity mMainView;
+    private SharedPreferences pref;
 
     public void attachView(MainActivity view) {
         this.mMainView = view;
+        pref =  PreferenceManager.getDefaultSharedPreferences(mMainView);
     }
 
     public void detachView() {
@@ -53,11 +55,13 @@ public class MainPresenter {
                 .subscribe(new Subscriber<List<Facility>>() {
                     @Override
                     public void onCompleted() {
-                        mMainView.dismissProgressBar();
+                        if(mMainView != null)
+                            mMainView.dismissProgressBar();
                     }
                     @Override
                     public void onError(Throwable e) {
-                        mMainView.dismissProgressBar();
+                        if(mMainView != null)
+                            mMainView.dismissProgressBar();
                         // should probably show some error message
                     }
                     @Override
@@ -69,7 +73,6 @@ public class MainPresenter {
 
     // Sets the favorite and open status of each Facility
     private List<Facility> setStatus(List<Facility> facilities) {
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mMainView);
 
         for(Facility facility : facilities) {
             // Query SharedReferences for each Facility's favorite status. defaults to false
@@ -86,7 +89,6 @@ public class MainPresenter {
         realm.executeTransactionAsync(bgRealm -> bgRealm.copyToRealmOrUpdate(facilities));
         realm.close();
     }
-
 
     // Uses the device time to determine which facilities should be open
     public boolean getOpenStatus(Facility facility, Calendar now) {

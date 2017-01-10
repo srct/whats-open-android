@@ -38,6 +38,7 @@
     <fr.castorflex.android.circularprogressbar.CircularProgressBar
         android:id="@+id/progress_bar"
         android:indeterminate="true"
+        android:visibility="gone"
         android:layout_gravity="center"
         app:cpb_color="@color/colorPrimary"
         app:cpb_rotation_speed="1.0"
