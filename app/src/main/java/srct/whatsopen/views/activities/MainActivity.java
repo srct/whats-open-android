@@ -1,4 +1,4 @@
-package srct.whatsopen.ui.activities;
+package srct.whatsopen.views.activities;
 
 import android.content.Intent;
 import android.support.v4.view.ViewPager;
@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -19,9 +18,9 @@ import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 
 import io.realm.Realm;
 import srct.whatsopen.R;
-import srct.whatsopen.ui.MainView;
-import srct.whatsopen.ui.presenters.MainPresenter;
-import srct.whatsopen.ui.adapters.FacilityListFragmentPagerAdapter;
+import srct.whatsopen.views.MainView;
+import srct.whatsopen.presenters.MainPresenter;
+import srct.whatsopen.views.adapters.FacilityListFragmentPagerAdapter;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 

@@ -1,11 +1,10 @@
-package srct.whatsopen.ui.activities;
+package srct.whatsopen.views.activities;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.danielstone.materialaboutlibrary.BuildConfig;
 import com.danielstone.materialaboutlibrary.MaterialAboutActivity;
 import com.danielstone.materialaboutlibrary.model.MaterialAboutActionItem;
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard;

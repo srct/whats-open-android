@@ -12,8 +12,9 @@ import io.realm.RealmList;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.MainSchedule;
 import srct.whatsopen.model.OpenTimes;
-import srct.whatsopen.ui.FacilityView;
-import srct.whatsopen.ui.presenters.FacilityPresenter;
+import srct.whatsopen.model.SpecialSchedule;
+import srct.whatsopen.views.FacilityView;
+import srct.whatsopen.presenters.FacilityPresenter;
 
 import static org.junit.Assert.*;
 
@@ -32,10 +33,11 @@ public class FacilityPresenterUnitTest {
         RealmList<OpenTimes> openTimesList = new RealmList<>();
         openTimesList.add(o1);
         openTimesList.add(o2);
-        MainSchedule mainSchedule = new MainSchedule(openTimesList);
+        MainSchedule mainSchedule = new MainSchedule(openTimesList,
+                "2017-01-09", "2017-01-15");
 
         mFacility = new Facility("Chef's Table at Brooklyn Fare", "Whitetop Hall",
-                mainSchedule, false, true);
+                mainSchedule, new RealmList<>(), false, true);
 
         now = Calendar.getInstance();
     }
@@ -72,7 +74,8 @@ public class FacilityPresenterUnitTest {
     public void testFacilityMessageNoSchedule() {
         // Set date
         now.set(2017, 0, 9, 13, 0); // Monday, 1/9/2017, 13:00:00
-        mFacility.setMainSchedule(new MainSchedule(new RealmList<OpenTimes>()));
+        mFacility.setMainSchedule(new MainSchedule(new RealmList<OpenTimes>(),
+                "2017-01-09", "2017-01-15"));
 
         String statusDuration = mPresenter.getStatusDuration(mFacility, now);
 
@@ -81,7 +84,7 @@ public class FacilityPresenterUnitTest {
 
     @Test
     public void testFacilitySchedule() {
-        String schedule = mPresenter.getSchedule(mFacility);
+        String schedule = mPresenter.getSchedule(mFacility, now);
 
         assertEquals("<b>Monday</b>: 11:00 AM - 6:00 PM<br/>" +
                      "<b>Tuesday</b>: 1:00 PM - 6:00 PM", schedule);
@@ -89,22 +92,35 @@ public class FacilityPresenterUnitTest {
 
     @Test
     public void testFacilityScheduleNoSchedule() {
-        mFacility.setMainSchedule(new MainSchedule(new RealmList<OpenTimes>()));
+        mFacility.setMainSchedule(new MainSchedule(new RealmList<OpenTimes>(),
+        "2017-01-09", "2017-01-15"));
 
-        String schedule = mPresenter.getSchedule(mFacility);
+        String schedule = mPresenter.getSchedule(mFacility, now);
 
         assertEquals("No schedule available", schedule);
     }
 
+    @Test
+    public void testFacilityScheduleForSpecialSchedule() {
+        RealmList<OpenTimes> openTimesList = mFacility.getMainSchedule().getOpenTimesList();
 
-    public class TestFacilityView extends AppCompatActivity implements FacilityView {
-        @Override
-        public Context getContext() {
-            return this;
-        }
+        // Set SpecialSchedule
+        SpecialSchedule s1 = new SpecialSchedule(openTimesList,
+                "2017-03-06", "2017-03-15");
+        SpecialSchedule s2 = new SpecialSchedule(openTimesList,
+                "2017-06-09", "2017-07-15");
+        RealmList<SpecialSchedule> specialSchedules = new RealmList<>();
+        specialSchedules.add(s1);
+        specialSchedules.add(s2);
 
-        @Override
-        public void changeFavoriteIcon(boolean favoriteStatus) {
-        }
+        mFacility.setSpecialSchedules(specialSchedules);
+
+        // Set date
+        now.set(2017, 2, 9, 12, 0); // Thursday, 3/9/2017, 12:00:00
+
+        String schedule = mPresenter.getSchedule(mFacility, now);
+
+        assertEquals("<b>Monday</b>: 11:00 AM - 6:00 PM<br/>" +
+                "<b>Tuesday</b>: 1:00 PM - 6:00 PM", schedule);
     }
 }

@@ -1,10 +1,10 @@
-package srct.whatsopen.ui.adapters;
+package srct.whatsopen.views.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import srct.whatsopen.ui.fragments.FacilityListFragment;
+import srct.whatsopen.views.fragments.FacilityListFragment;
 
 
 public class FacilityListFragmentPagerAdapter extends FragmentPagerAdapter {

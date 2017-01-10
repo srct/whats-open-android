@@ -1,4 +1,4 @@
-package srct.whatsopen.ui;
+package srct.whatsopen.views;
 
 
 import android.content.Context;

@@ -5,15 +5,15 @@ import com.google.gson.annotations.SerializedName;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
-public class MainSchedule extends RealmObject {
+public class SpecialSchedule extends RealmObject {
 
-    public MainSchedule(RealmList<OpenTimes> openTimesList, String validStart, String validEnd) {
+    public SpecialSchedule(RealmList<OpenTimes> openTimesList, String validStart, String validEnd) {
         mOpenTimesList = openTimesList;
         this.validStart = validStart;
         this.validEnd = validEnd;
     }
 
-    public MainSchedule() {
+    public SpecialSchedule() {
     }
 
     @SerializedName("open_times")
@@ -40,6 +40,7 @@ public class MainSchedule extends RealmObject {
     public void setValidEnd(String validEnd) {
         this.validEnd = validEnd;
     }
+
     public RealmList<OpenTimes> getOpenTimesList() {
         return mOpenTimesList;
     }

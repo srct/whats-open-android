@@ -1,4 +1,4 @@
-package srct.whatsopen.ui.activities;
+package srct.whatsopen.views.activities;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,8 +17,8 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
-import srct.whatsopen.ui.FacilityView;
-import srct.whatsopen.ui.presenters.FacilityPresenter;
+import srct.whatsopen.views.FacilityView;
+import srct.whatsopen.presenters.FacilityPresenter;
 
 
 public class DetailActivity extends AppCompatActivity implements FacilityView{
@@ -124,6 +124,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
 
         locationTextView.setText(mFacility.getLocation());
 
-        scheduleTextView.setText(Html.fromHtml(mPresenter.getSchedule(mFacility)));
+        scheduleTextView.setText(Html.fromHtml(mPresenter
+                .getSchedule(mFacility, Calendar.getInstance())));
     }
 }

@@ -1,8 +1,9 @@
-package srct.whatsopen.ui.presenters;
+package srct.whatsopen.presenters;
 
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,9 +22,10 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.OpenTimes;
-import srct.whatsopen.service.WhatsOpenClient;
+import srct.whatsopen.model.SpecialSchedule;
 import srct.whatsopen.service.WhatsOpenService;
-import srct.whatsopen.ui.activities.MainActivity;
+import srct.whatsopen.service.WhatsOpenApi;
+import srct.whatsopen.views.activities.MainActivity;
 
 public class MainPresenter {
 
@@ -44,8 +46,8 @@ public class MainPresenter {
     public void loadFacilities() {
         mMainView.showProgressBar();
 
-        // Get WhatsOpenClient singleton
-        WhatsOpenService service = WhatsOpenClient.getInstance();
+        // Get WhatsOpenApi singleton
+        WhatsOpenApi service = WhatsOpenService.getInstance();
 
         Observable<List<Facility>> call = service.facilityList();
         call.subscribeOn(Schedulers.io())
@@ -62,6 +64,7 @@ public class MainPresenter {
                     public void onError(Throwable e) {
                         if(mMainView != null)
                             mMainView.dismissProgressBar();
+                        Log.d("Network bad", e.getMessage());
                         // should probably show some error message
                     }
                     @Override
@@ -92,7 +95,7 @@ public class MainPresenter {
 
     // Uses the device time to determine which facilities should be open
     public boolean getOpenStatus(Facility facility, Calendar now) {
-        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
+        RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
 
         // have to mess with the current day value, as Calender.DAY_OF_WEEK
         // starts with Sunday as 1 and the Whats Open Api starts with Monday at 0
@@ -123,5 +126,30 @@ public class MainPresenter {
             pe.printStackTrace();
             return false;
         }
+    }
+
+    // Returns the active schedule given the current date
+    private RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
+        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date currentDate = now.getTime();
+
+            for(SpecialSchedule s : facility.getSpecialSchedules()) {
+                Date startDate = sdf.parse(s.getValidStart());
+                Date endDate = sdf.parse(s.getValidEnd());
+
+                if(currentDate.compareTo(startDate) >= 0 && currentDate.compareTo(endDate) <= 0) {
+                    openTimesList = s.getOpenTimesList();
+                    return openTimesList;
+                }
+            }
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+            return null;
+        }
+
+        return openTimesList;
     }
 }

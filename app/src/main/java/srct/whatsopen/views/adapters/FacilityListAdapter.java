@@ -1,4 +1,4 @@
-package srct.whatsopen.ui.adapters;
+package srct.whatsopen.views.adapters;
 
 
 import android.content.Context;
@@ -19,9 +19,9 @@ import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
-import srct.whatsopen.ui.FacilityView;
-import srct.whatsopen.ui.activities.DetailActivity;
-import srct.whatsopen.ui.presenters.FacilityPresenter;
+import srct.whatsopen.views.FacilityView;
+import srct.whatsopen.views.activities.DetailActivity;
+import srct.whatsopen.presenters.FacilityPresenter;
 
 /**
  * Basic RecyclerView boilerplate, with some added Realm stuff

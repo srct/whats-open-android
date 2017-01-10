@@ -1,4 +1,4 @@
-package srct.whatsopen.ui.fragments;
+package srct.whatsopen.views.fragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,8 +15,8 @@ import io.realm.Realm;
 import io.realm.Sort;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
-import srct.whatsopen.ui.decorations.DividerItemDecoration;
-import srct.whatsopen.ui.adapters.FacilityListAdapter;
+import srct.whatsopen.views.decorations.DividerItemDecoration;
+import srct.whatsopen.views.adapters.FacilityListAdapter;
 
 
 public class FacilityListFragment extends android.support.v4.app.Fragment {

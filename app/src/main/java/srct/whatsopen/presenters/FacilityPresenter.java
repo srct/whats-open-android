@@ -1,4 +1,4 @@
-package srct.whatsopen.ui.presenters;
+package srct.whatsopen.presenters;
 
 
 import android.content.SharedPreferences;
@@ -13,7 +13,8 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.OpenTimes;
-import srct.whatsopen.ui.FacilityView;
+import srct.whatsopen.model.SpecialSchedule;
+import srct.whatsopen.views.FacilityView;
 
 public class FacilityPresenter {
 
@@ -42,7 +43,7 @@ public class FacilityPresenter {
 
         final String facilityName = facility.getName();
         realm.executeTransactionAsync(bgRealm -> {
-            // have to requery for the object as it was created on a separate thread
+            // have to re-query for the object as it was created on a separate thread
             Facility f = bgRealm.where(Facility.class)
                     .equalTo("mName", facilityName).findFirst();
 
@@ -56,7 +57,7 @@ public class FacilityPresenter {
 
     // Finds the next time the facility closes or opens and returns it
     public String getStatusDuration(Facility facility, Calendar now) {
-        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
+        RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
 
         if(openTimesList.size() == 0)
             return "No open time on schedule";
@@ -150,8 +151,8 @@ public class FacilityPresenter {
     }
 
     // Parses the schedule into an HTML string
-    public String getSchedule(Facility facility) {
-        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
+    public String getSchedule(Facility facility, Calendar now) {
+        RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
 
         if(openTimesList.size() == 0)
            return "No schedule available";
@@ -171,5 +172,30 @@ public class FacilityPresenter {
         }
 
         return scheduleString.toString();
+    }
+
+    // Returns the active schedule given the current date
+    private RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
+        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date currentDate = now.getTime();
+
+            for(SpecialSchedule s : facility.getSpecialSchedules()) {
+                Date startDate = sdf.parse(s.getValidStart());
+                Date endDate = sdf.parse(s.getValidEnd());
+
+                if(currentDate.compareTo(startDate) >= 0 && currentDate.compareTo(endDate) <= 0) {
+                    openTimesList = s.getOpenTimesList();
+                    return openTimesList;
+                }
+            }
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+            return null;
+        }
+
+        return openTimesList;
     }
 }

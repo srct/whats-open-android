@@ -1,4 +1,4 @@
-package srct.whatsopen.ui.decorations;
+package srct.whatsopen.views.decorations;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
