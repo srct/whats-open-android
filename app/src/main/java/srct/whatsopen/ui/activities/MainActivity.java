@@ -7,16 +7,25 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+
 import srct.whatsopen.R;
+import srct.whatsopen.ui.MainView;
 import srct.whatsopen.ui.presenters.MainPresenter;
 import srct.whatsopen.ui.adapters.FacilityListFragmentPagerAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainView {
+
+    @BindView(R.id.progress_bar) CircularProgressBar mProgressBar;
+    @BindView(R.id.list_view) LinearLayout mListView;
 
     private MainPresenter mPresenter;
 
@@ -24,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ButterKnife.bind(this);
 
         // Set up presenter
         mPresenter = new MainPresenter();
@@ -74,6 +85,16 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void dismissProgressBar() {
+        mProgressBar.setVisibility(View.GONE);
     }
 
     // Opens the About page for the app

@@ -41,17 +41,14 @@ public class FacilityPresenter {
         final SharedPreferences.Editor editor = pref.edit();
 
         final String facilityName = facility.getName();
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm bgRealm) {
-                // have to requery for the object as it was created on a separate thread
-                Facility f = bgRealm.where(Facility.class)
-                        .equalTo("mName", facilityName).findFirst();
+        realm.executeTransactionAsync(bgRealm -> {
+            // have to requery for the object as it was created on a separate thread
+            Facility f = bgRealm.where(Facility.class)
+                    .equalTo("mName", facilityName).findFirst();
 
-                f.setFavorited(status);
-                editor.putBoolean(facilityName, status);
-                editor.apply();
-            }
+            f.setFavorited(status);
+            editor.putBoolean(facilityName, status);
+            editor.apply();
         }, null, null);
 
         realm.close();

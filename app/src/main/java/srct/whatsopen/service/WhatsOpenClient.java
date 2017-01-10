@@ -7,7 +7,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import io.realm.RealmObject;
+import io.realm.rx.RxObservableFactory;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -56,6 +58,7 @@ public class WhatsOpenClient {
                             .create();
                     sRetrofit = new Retrofit.Builder()
                             .baseUrl(BASE_URL)
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create(gson))
                             .build();
                 }

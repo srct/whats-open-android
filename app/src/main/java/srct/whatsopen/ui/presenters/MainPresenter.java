@@ -12,9 +12,13 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
+
+import rx.Observable;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.service.WhatsOpenClient;
@@ -23,53 +27,66 @@ import srct.whatsopen.ui.activities.MainActivity;
 
 public class MainPresenter {
 
-    private MainActivity mainView;
+    private MainActivity mMainView;
 
     public void attachView(MainActivity view) {
-        this.mainView = view;
+        this.mMainView = view;
     }
 
     public void detachView() {
-        this.mainView = null;
+        this.mMainView = null;
     }
 
     // Gets a Call from the given Retrofit service, then asynchronously executes it
     // On success, copies the resulting facility list to the Realm DB
     public void loadFacilities() {
+        mMainView.showProgressBar();
+
         // Get WhatsOpenClient singleton
         WhatsOpenService service = WhatsOpenClient.getInstance();
 
-        // Get Realm and SharedPreference instances
-        final Realm realm = Realm.getDefaultInstance();
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mainView);
-
-        Call<List<Facility>> call = service.facilityList();
-
-        call.enqueue(new Callback<List<Facility>>() {
-            @Override
-            public void onResponse(Call<List<Facility>> call, Response<List<Facility>> response) {
-                List<Facility> facilities = response.body();
-
-                for(Facility facility : facilities) {
-                    // Query SharedReferences for each Facility's favorite status. defaults to false
-                    facility.setFavorited(pref.getBoolean(facility.getName(), false));
-                    facility.setOpen(getOpenStatus(facility, Calendar.getInstance()));
-                }
-
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(facilities);
-                realm.commitTransaction();
-
-                realm.close();
-            }
-
-            @Override
-            public void onFailure(Call<List<Facility>> call, Throwable t) {
-                // do some stuff
-                realm.close();
-            }
-        });
+        Observable<List<Facility>> call = service.facilityList();
+        call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(facilities1 -> setStatus(facilities1))
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<List<Facility>>() {
+                    @Override
+                    public void onCompleted() {
+                        mMainView.dismissProgressBar();
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        mMainView.dismissProgressBar();
+                        // should probably show some error message
+                    }
+                    @Override
+                    public void onNext(List<Facility> facilities) {
+                        writeToRealm(facilities);
+                    }
+                });
     }
+
+    // Sets the favorite and open status of each Facility
+    private List<Facility> setStatus(List<Facility> facilities) {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mMainView);
+
+        for(Facility facility : facilities) {
+            // Query SharedReferences for each Facility's favorite status. defaults to false
+            facility.setFavorited(pref.getBoolean(facility.getName(), false));
+            facility.setOpen(getOpenStatus(facility, Calendar.getInstance()));
+        }
+
+        return facilities;
+    }
+
+    // Asynchronously writes the facility list to Realm
+    private void writeToRealm(List<Facility> facilities) {
+        final Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(bgRealm -> bgRealm.copyToRealmOrUpdate(facilities));
+        realm.close();
+    }
+
 
     // Uses the device time to determine which facilities should be open
     public boolean getOpenStatus(Facility facility, Calendar now) {
