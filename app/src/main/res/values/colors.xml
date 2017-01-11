@@ -3,7 +3,7 @@
     <color name="colorPrimary">#006633</color>
     <color name="colorPrimaryLight">#008542</color>
     <color name="colorPrimaryDark">#015429</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#008542</color>
     <color name="facilityText">#757575</color>
     <color name="favoriteButtonOff">#757575</color>
     <color name="favoriteButtonOn">#E8B827</color>

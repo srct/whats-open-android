@@ -2,23 +2,27 @@ package srct.whatsopen.views.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.realm.Realm;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.views.FacilityView;
 import srct.whatsopen.presenters.FacilityPresenter;
+import srct.whatsopen.views.fragments.NotificationDialogFragment;
 
 
 public class DetailActivity extends AppCompatActivity implements FacilityView{
@@ -27,6 +31,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
     @BindView(R.id.open_duration) TextView openDurationTextView;
     @BindView(R.id.location_text) TextView locationTextView;
     @BindView(R.id.schedule_text) TextView scheduleTextView;
+    @BindView(R.id.notification_button) Button notificationButton;
 
     MenuItem mFavoriteMenuItem;
 
@@ -93,6 +98,14 @@ public class DetailActivity extends AppCompatActivity implements FacilityView{
             mFavoriteMenuItem.setIcon(R.drawable.ic_fav_button_on_24dp);
         else
             mFavoriteMenuItem.setIcon(R.drawable.ic_fav_button_white_24dp);
+    }
+
+    @OnClick(R.id.notification_button)
+    public void showNotificationDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        NotificationDialogFragment notificationDialogFragment =
+                NotificationDialogFragment.newInstance("");
+        notificationDialogFragment.show(fm, "fragment_notification_dialog");
     }
 
     // Queries Realm for the facility matching the key
