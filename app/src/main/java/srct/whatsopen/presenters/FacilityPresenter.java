@@ -2,6 +2,7 @@ package srct.whatsopen.presenters;
 
 
 import android.content.SharedPreferences;
+import android.graphics.Path;
 import android.preference.PreferenceManager;
 
 import java.text.ParseException;
@@ -66,7 +67,11 @@ public class FacilityPresenter {
         String durationMessage;
 
         if(facility.isOpen()) {
-            String closingTime = openTimesList.get(currentDay).getEndTime();
+            if(facilityDoesNotClose(openTimesList.first())) {
+                return "This facility is always open";
+            }
+
+            String closingTime = getCurrentEndTime(openTimesList, currentDay);
             closingTime = parseTo12HourTime(closingTime);
             durationMessage = "Closes at " + closingTime;
 
@@ -74,14 +79,14 @@ public class FacilityPresenter {
         }
 
         // Check if the facility opens later today
-        if(currentDay < openTimesList.size()) {
+        if(openTimesContains(openTimesList, currentDay)) {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             try {
-                Date currentTime = now.getTime();
-                Date startTime = sdf.parse(openTimesList.get(currentDay).getStartTime());
+                Date currentTime = sdf.parse(sdf.format(now.getTime()));
+                Date startTime = sdf.parse(getCurrentStartTime(openTimesList, currentDay));
 
                 if(currentTime.compareTo(startTime) < 0) {
-                    String openingTime = openTimesList.get(currentDay).getStartTime();
+                    String openingTime = getCurrentStartTime(openTimesList, currentDay);
                     openingTime = parseTo12HourTime(openingTime);
 
                     return "Opens today at " + openingTime;
@@ -97,12 +102,20 @@ public class FacilityPresenter {
         int nextDay = findNextDay(openTimesList, currentDay);
         String nextDayStr = parseIntToDay(nextDay);
 
-        String openingTime = openTimesList.get(nextDay).getStartTime();
+        String openingTime = getCurrentStartTime(openTimesList, nextDay);
         openingTime = parseTo12HourTime(openingTime);
 
         durationMessage = "Opens next on " + nextDayStr + " at " + openingTime;
 
         return durationMessage;
+    }
+
+    private boolean openTimesContains(RealmList<OpenTimes> openTimesList, int currentDay) {
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
+                return true;
+        }
+        return false;
     }
 
     // Returns the next open day in the list of OpenTimes
@@ -116,6 +129,32 @@ public class FacilityPresenter {
         }
 
         return nextDay;
+    }
+
+    // Returns the end time for the current day
+    private String getCurrentEndTime(RealmList<OpenTimes> openTimesList, int currentDay) {
+        String endTime = "";
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
+                endTime = o.getEndTime();
+        }
+        return endTime;
+    }
+
+    // Returns the end time for the current day
+    private String getCurrentStartTime(RealmList<OpenTimes> openTimesList, int currentDay) {
+        String startTime = "";
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
+                startTime = o.getStartTime();
+        }
+        return startTime;
+    }
+
+    private boolean facilityDoesNotClose(OpenTimes openTimes) {
+        return (openTimes.getStartDay() == 0 && openTimes.getEndDay() == 6 &&
+                openTimes.getStartTime().equals("00:00:00") &&
+                openTimes.getEndTime().equals("23:59:59"));
     }
 
     // Parses 24 hour formatted time String to 12 hour formatted time String
@@ -158,6 +197,9 @@ public class FacilityPresenter {
 
         if(openTimesList.size() == 0)
            return "No schedule available";
+
+        if(facilityDoesNotClose(openTimesList.first()))
+            return "This facility is always open";
 
         StringBuilder scheduleString = new StringBuilder();
         boolean first = true;

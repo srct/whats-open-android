@@ -103,7 +103,7 @@ public class MainPresenter {
         OpenTimes currentOpenTimes = null;
 
         for(OpenTimes o : openTimesList) {
-            if(o.getStartDay() == currentDay || o.getEndDay() == currentDay)
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
                 currentOpenTimes = o;
         }
 
