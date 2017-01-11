@@ -77,7 +77,7 @@ public class FacilityPresenter {
         if(currentDay < openTimesList.size()) {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
             try {
-                Date currentTime = sdf.parse(sdf.format(now.getTime()));
+                Date currentTime = now.getTime();
                 Date startTime = sdf.parse(openTimesList.get(currentDay).getStartTime());
 
                 if(currentTime.compareTo(startTime) < 0) {
@@ -100,7 +100,7 @@ public class FacilityPresenter {
         String openingTime = openTimesList.get(nextDay).getStartTime();
         openingTime = parseTo12HourTime(openingTime);
 
-        durationMessage = "Opens on " + nextDayStr + " at " + openingTime;
+        durationMessage = "Opens next on " + nextDayStr + " at " + openingTime;
 
         return durationMessage;
     }
@@ -109,8 +109,10 @@ public class FacilityPresenter {
     private int findNextDay(RealmList<OpenTimes> openTimesList, int current) {
         int nextDay = openTimesList.first().getStartDay();
         for(OpenTimes o : openTimesList) {
-            if(o.getStartDay() > current)
+            if(o.getStartDay() > current) {
                 nextDay = o.getStartDay();
+                break;
+            }
         }
 
         return nextDay;
