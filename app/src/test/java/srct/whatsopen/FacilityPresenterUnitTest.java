@@ -85,9 +85,11 @@ public class FacilityPresenterUnitTest {
 
     @Test
     public void testFacilitySchedule() {
+        // Set date
+        now.set(2017, 0, 9, 13, 0); // Monday, 1/9/2017, 13:00:00
         String schedule = mPresenter.getSchedule(mFacility, now);
 
-        assertEquals("<b>Monday</b>: 11:00 AM - 6:00 PM<br/>" +
+        assertEquals("<strong><b>Monday</b>: 11:00 AM - 6:00 PM</strong><br/>" +
                      "<b>Tuesday</b>: 1:00 PM - 6:00 PM", schedule);
     }
 
