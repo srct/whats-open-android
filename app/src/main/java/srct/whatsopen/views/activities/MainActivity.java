@@ -1,5 +1,6 @@
 package srct.whatsopen.views.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -96,6 +97,11 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     public void dismissProgressBar() {
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 
     // Opens the About page for the app

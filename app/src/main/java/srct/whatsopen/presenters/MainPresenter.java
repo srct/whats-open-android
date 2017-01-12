@@ -25,16 +25,17 @@ import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.model.SpecialSchedule;
 import srct.whatsopen.service.WhatsOpenService;
 import srct.whatsopen.service.WhatsOpenApi;
+import srct.whatsopen.views.MainView;
 import srct.whatsopen.views.activities.MainActivity;
 
 public class MainPresenter {
 
-    private MainActivity mMainView;
+    private MainView mMainView;
     private SharedPreferences pref;
 
-    public void attachView(MainActivity view) {
+    public void attachView(MainView view) {
         this.mMainView = view;
-        pref =  PreferenceManager.getDefaultSharedPreferences(mMainView);
+        pref =  PreferenceManager.getDefaultSharedPreferences(mMainView.getContext());
     }
 
     public void detachView() {

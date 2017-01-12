@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/fragment_facility"
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -13,8 +13,8 @@
     tools:context="srct.whatsopen.views.fragments.FacilityListFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvFacilities"
+        android:id="@+id/rv_facilities"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
