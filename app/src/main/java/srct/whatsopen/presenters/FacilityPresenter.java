@@ -192,8 +192,10 @@ public class FacilityPresenter {
     }
 
     // Parses the schedule into an HTML string
+    // Kind of a hacky approach
     public String getSchedule(Facility facility, Calendar now) {
         RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
+        int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
 
         if(openTimesList.size() == 0)
            return "No schedule available";
@@ -209,10 +211,17 @@ public class FacilityPresenter {
             else
                 scheduleString.append("<br/>");
 
+            // the current day's schedule should be highlighted
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
+                scheduleString.append("<strong>");
+
             scheduleString.append("<b>" + parseIntToDay(o.getStartDay()) + "</b>: ");
             scheduleString.append(parseTo12HourTime(o.getStartTime()));
             scheduleString.append(" - ");
             scheduleString.append(parseTo12HourTime(o.getEndTime()));
+
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
+                scheduleString.append("</strong>");
         }
 
         return scheduleString.toString();
