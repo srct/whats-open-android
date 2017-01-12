@@ -5,20 +5,28 @@
               android:layout_height="wrap_content"
               android:elevation="2dp">
 
-    <RelativeLayout android:id="@+id/text_layout"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:layout_weight="1">
+    <LinearLayout android:id="@+id/text_layout"
+                  android:paddingTop="15dp"
+                  android:paddingBottom="15dp"
+                  android:layout_width="0dp"
+                  android:orientation="vertical"
+                  android:layout_height="match_parent"
+                  android:background="?android:attr/selectableItemBackground"
+                  android:layout_weight="1">
 
         <TextView android:id="@+id/facility_name"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textColor="@color/facilityText"
                   android:paddingLeft="10dp"/>
-    </RelativeLayout>
+
+        <TextView android:id="@+id/facility_duration"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:visibility="gone"
+                  android:textColor="@color/facilityText"
+                  android:paddingLeft="16dp"/>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
