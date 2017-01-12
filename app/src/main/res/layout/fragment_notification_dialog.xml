@@ -107,7 +107,7 @@
 
         <Button
             android:id="@+id/cancel_button"
-            android:text="Edit"
+            android:text="Cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
