@@ -58,15 +58,19 @@
 
             <Button
                 android:id="@+id/save_button"
-                android:layout_gravity="center_horizontal"
                 android:text="Save"
+                android:textColor="@color/colorPrimary"
+                android:layout_gravity="center_horizontal"
+                style="?android:borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <Button
                 android:id="@+id/cancel_button"
-                android:layout_gravity="center_horizontal"
                 android:text="Cancel"
+                android:textColor="@color/colorPrimary"
+                android:layout_gravity="center_horizontal"
+                style="?android:borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

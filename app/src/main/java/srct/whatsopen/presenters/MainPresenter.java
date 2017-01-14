@@ -4,6 +4,7 @@ package srct.whatsopen.presenters;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,8 +66,8 @@ public class MainPresenter {
                     public void onError(Throwable e) {
                         if(mMainView != null)
                             mMainView.dismissProgressBar();
-                        Log.d("Network bad", e.getMessage());
-                        // should probably show some error message
+                        Toast.makeText(mMainView.getContext(), "Error establishing connection, " +
+                                "schedules may be inaccurate.", Toast.LENGTH_LONG).show();
                     }
                     @Override
                     public void onNext(List<Facility> facilities) {

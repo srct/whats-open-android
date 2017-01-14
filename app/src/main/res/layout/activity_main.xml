@@ -7,7 +7,6 @@
               tools:context="srct.whatsopen.views.activities.MainActivity">
 
     <LinearLayout
-        android:id="@+id/list_view"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:layout_width="match_parent"

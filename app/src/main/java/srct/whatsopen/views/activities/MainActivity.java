@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -26,6 +27,7 @@ import srct.whatsopen.views.adapters.FacilityListFragmentPagerAdapter;
 public class MainActivity extends AppCompatActivity implements MainView {
 
     @BindView(R.id.progress_bar) CircularProgressBar mProgressBar;
+    @BindView(R.id.view_pager) ViewPager mViewPager;
 
     private MainPresenter mPresenter;
 
@@ -41,24 +43,22 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mPresenter = new MainPresenter();
         mPresenter.attachView(this);
 
-        // Get facility data if necessary
-        if(Realm.getDefaultInstance().isEmpty())
-            mPresenter.loadFacilities();
+        // Reload facility data
+        mPresenter.loadFacilities();
 
         // Configure toolbar
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Get the ViewPager and set its PagerAdapter
-        ViewPager viewPager = ButterKnife.findById(this, R.id.view_pager);
-        viewPager.setAdapter(new FacilityListFragmentPagerAdapter(getSupportFragmentManager()));
+        mViewPager.setAdapter(new FacilityListFragmentPagerAdapter(getSupportFragmentManager()));
 
         // Now give the TabStrip the ViewPager
         PagerSlidingTabStrip tabStrip = ButterKnife.findById(this, R.id.tabs);
         tabStrip.setTabPaddingLeftRight(0);
-        tabStrip.setViewPager(viewPager);
+        tabStrip.setViewPager(mViewPager);
 
-        viewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(1);
     }
 
     @Override
@@ -91,12 +91,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public void showProgressBar() {
+        mViewPager.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void dismissProgressBar() {
         mProgressBar.setVisibility(View.GONE);
+        mViewPager.setVisibility(View.VISIBLE);
     }
 
     @Override
