@@ -41,6 +41,7 @@ public class FacilityPresenterUnitTest {
                 mainSchedule, new RealmList<>(), false, true);
 
         now = Calendar.getInstance();
+        now.set(2017, 0, 9, 13, 0); // Monday, 1/9/2017, 13:00:00
     }
 
     @Test
