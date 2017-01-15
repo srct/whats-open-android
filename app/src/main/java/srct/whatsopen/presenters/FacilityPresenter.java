@@ -49,7 +49,7 @@ public class FacilityPresenter {
                     .equalTo("mName", facilityName).findFirst();
 
             f.setFavorited(status);
-            editor.putBoolean(facilityName, status);
+            editor.putBoolean(facilityName+"FavoriteStatus", status);
             editor.apply();
         }, null, null);
 
@@ -68,7 +68,7 @@ public class FacilityPresenter {
 
         if(facility.isOpen()) {
             if(facilityDoesNotClose(openTimesList.first())) {
-                return "This facility is always open";
+                return "Open 24/7";
             }
 
             String closingTime = getCurrentEndTime(openTimesList, currentDay);

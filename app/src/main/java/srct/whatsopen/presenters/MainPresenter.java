@@ -36,7 +36,7 @@ public class MainPresenter {
 
     public void attachView(MainView view) {
         this.mMainView = view;
-        pref =  PreferenceManager.getDefaultSharedPreferences(mMainView.getContext());
+        pref = PreferenceManager.getDefaultSharedPreferences(mMainView.getContext());
     }
 
     public void detachView() {
@@ -81,7 +81,7 @@ public class MainPresenter {
 
         for(Facility facility : facilities) {
             // Query SharedReferences for each Facility's favorite status. defaults to false
-            facility.setFavorited(pref.getBoolean(facility.getName(), false));
+            facility.setFavorited(pref.getBoolean(facility.getName()+"FavoriteStatus", false));
             facility.setOpen(getOpenStatus(facility, Calendar.getInstance()));
         }
 

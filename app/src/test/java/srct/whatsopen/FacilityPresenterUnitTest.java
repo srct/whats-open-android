@@ -141,7 +141,7 @@ public class FacilityPresenterUnitTest {
 
         String statusDuration = mPresenter.getStatusDuration(mFacility, now);
 
-        assertEquals("This facility is always open", statusDuration);
+        assertEquals("Open 24/7", statusDuration);
     }
 
     @Test

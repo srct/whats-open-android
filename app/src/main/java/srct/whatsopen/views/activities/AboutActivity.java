@@ -38,7 +38,7 @@ public class AboutActivity extends MaterialAboutActivity {
         contributorsCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("Version 1.0")
                 .icon(R.drawable.ic_people_black_24dp)
-                .subText("Robert Hitt")
+                .subText("Robert Hitt, Tanner Grehawick")
                 .build());
 
         MaterialAboutCard.Builder aboutCardBuilder = new MaterialAboutCard.Builder();
