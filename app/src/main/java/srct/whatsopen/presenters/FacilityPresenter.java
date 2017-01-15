@@ -1,9 +1,12 @@
 package srct.whatsopen.presenters;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Path;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +15,7 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.model.SpecialSchedule;
@@ -33,6 +37,14 @@ public class FacilityPresenter {
     // and updates the favorite status in SharedPreferences
     public void toggleFavorite(Facility facility) {
         final boolean status = !facility.isFavorited();
+
+        Context context = mFacilityView.getContext();
+        Resources res = context.getResources();
+        int formatName = status ? R.string.toast_set_favorite : R.string.toast_unset_favorite;
+        String msg = String.format(res.getString(formatName), facility.getName());
+        Toast toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
+        toast.show();
+
         mFacilityView.changeFavoriteIcon(status);
 
         // Get Realm instance and SharedPreferences

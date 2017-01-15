@@ -138,12 +138,6 @@ public class FacilityListAdapter extends
         @OnClick(R.id.favorite_button)
         public void setFavorite() {
             mPresenter.toggleFavorite(data);
-            Context context = getContext();
-            Resources res = context.getResources();
-            int formatName = data.isFavorited() ? R.string.toast_unset_favorite : R.string.toast_set_favorite;
-            String msg = String.format(res.getString(formatName), data.getName());
-            Toast toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-            toast.show();
         }
 
         @Override
