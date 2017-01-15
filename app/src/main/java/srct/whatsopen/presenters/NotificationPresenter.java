@@ -71,7 +71,7 @@ public class NotificationPresenter {
             editNotifications(name, opening, closing, interval_on, interval_15, interval_30,
                     interval_hour);
         } else {
-            setNotifications("Notifications set.", name, opening, closing, interval_on,
+            setNotifications("Notifications set", name, opening, closing, interval_on,
                     interval_15, interval_30, interval_hour);
         }
     }
@@ -84,20 +84,20 @@ public class NotificationPresenter {
         if(!opening && !closing && !interval_on && !interval_15 && !interval_30 && !interval_hour) {
             removeNotifications(name);
         } else {
-            setNotifications("Notifications edited.", name, opening, closing, interval_on,
+            setNotifications("Notifications edited", name, opening, closing, interval_on,
                     interval_15, interval_30, interval_hour);
         }
 
     }
 
     // Removes the Notification settings from SharedPreferences
-    private void removeNotifications(String name) {
+    public void removeNotifications(String name) {
         SharedPreferences.Editor editor = pref.edit();
         editor.putStringSet(name + "NotificationSettings", null);
         editor.apply();
 
-        Toast.makeText(mNotificationView.getContext(),
-                "Notifications removed.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mNotificationView.getContext(), "Notifications removed",
+                Toast.LENGTH_SHORT).show();
 
         mNotificationView.dismiss();
     }

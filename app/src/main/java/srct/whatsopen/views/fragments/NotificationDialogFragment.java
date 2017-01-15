@@ -3,7 +3,6 @@ package srct.whatsopen.views.fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -39,11 +38,11 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
     @BindView(R.id.interval_hour_check) CheckBox intervalHourCheckBox;
     @BindView(R.id.save_button) Button saveButton;
     @BindView(R.id.cancel_button) Button cancelButton;
+    @BindView(R.id.remove_button) Button removeButton;
 
     private String mName;
     private NotificationPresenter mPresenter;
     private boolean inEditMode;
-    private Handler mHandler;
 
     public NotificationDialogFragment() {
     }
@@ -95,9 +94,13 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
         super.onViewCreated(view, savedInstanceState);
 
         ButterKnife.bind(this, view);
+        getDialog().setTitle(mName+" Notifications");
 
         if(inEditMode) {
             mPresenter.presentNotifications(mName);
+            removeButton.setVisibility(View.VISIBLE);
+        } else {
+            removeButton.setVisibility(View.GONE);
         }
     }
 
@@ -114,8 +117,16 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
 
     @OnClick(R.id.cancel_button)
     public void onCancel() {
-        Toast.makeText(getActivity(), "Canceled.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
         dismiss();
+    }
+
+    @OnClick(R.id.remove_button)
+    public void onRemove() {
+        mPresenter.removeNotifications(mName);
+
+        NotificationDialogListener listener = (NotificationDialogListener) getActivity();
+        listener.onSetNotification();
     }
 
     @Override
