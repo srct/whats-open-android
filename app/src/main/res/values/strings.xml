@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">What\'s Open</string>
+    <string name="toast_set_favorite">Added %s to Favorites</string>
+    <string name="toast_unset_favorite">Removed %s from Favorites</string>
 </resources>
