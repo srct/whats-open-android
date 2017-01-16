@@ -54,7 +54,7 @@ public class MainPresenter {
         Observable<List<Facility>> call = service.facilityList();
         call.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(facilities1 -> setStatus(facilities1))
+                .map(facilities1 -> setFavoriteStatus(facilities1))
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<List<Facility>>() {
                     @Override
@@ -66,8 +66,8 @@ public class MainPresenter {
                     public void onError(Throwable e) {
                         if(mMainView != null)
                             mMainView.dismissProgressBar();
-                        Toast.makeText(mMainView.getContext(), "Error establishing connection, " +
-                                "schedules may be inaccurate.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mMainView.getContext(), "Error getting data; " +
+                                "schedules may be out of date.", Toast.LENGTH_LONG).show();
                     }
                     @Override
                     public void onNext(List<Facility> facilities) {
@@ -77,12 +77,11 @@ public class MainPresenter {
     }
 
     // Sets the favorite and open status of each Facility
-    private List<Facility> setStatus(List<Facility> facilities) {
+    private List<Facility> setFavoriteStatus(List<Facility> facilities) {
 
         for(Facility facility : facilities) {
             // Query SharedReferences for each Facility's favorite status. defaults to false
             facility.setFavorited(pref.getBoolean(facility.getName()+"FavoriteStatus", false));
-            facility.setOpen(getOpenStatus(facility, Calendar.getInstance()));
         }
 
         return facilities;
@@ -92,6 +91,18 @@ public class MainPresenter {
     private void writeToRealm(List<Facility> facilities) {
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(bgRealm -> bgRealm.copyToRealmOrUpdate(facilities));
+        realm.close();
+    }
+
+    // Sets the open status of each facility in the Realm instance
+    public void updateOpenStatus() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(bgRealm -> {
+            List<Facility> facilities = bgRealm.where(Facility.class).findAll();
+            for(Facility f : facilities) {
+                f.setOpen(getOpenStatus(f, Calendar.getInstance()));
+            }
+        }, null, null);
         realm.close();
     }
 

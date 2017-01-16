@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
         // Reload facility data
         mPresenter.loadFacilities();
+        mPresenter.updateOpenStatus();
 
         // Configure toolbar
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
