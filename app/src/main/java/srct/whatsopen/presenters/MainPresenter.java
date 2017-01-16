@@ -54,7 +54,7 @@ public class MainPresenter {
         Observable<List<Facility>> call = service.facilityList();
         call.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(facilities1 -> setFavoriteStatus(facilities1))
+                .map(facilities1 -> setStatus(facilities1))
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<List<Facility>>() {
                     @Override
@@ -64,6 +64,7 @@ public class MainPresenter {
                     }
                     @Override
                     public void onError(Throwable e) {
+                        updateOpenStatus();
                         if(mMainView != null)
                             mMainView.dismissProgressBar();
                         Toast.makeText(mMainView.getContext(), "Error getting data; " +
@@ -77,11 +78,12 @@ public class MainPresenter {
     }
 
     // Sets the favorite and open status of each Facility
-    private List<Facility> setFavoriteStatus(List<Facility> facilities) {
+    private List<Facility> setStatus(List<Facility> facilities) {
 
         for(Facility facility : facilities) {
             // Query SharedReferences for each Facility's favorite status. defaults to false
             facility.setFavorited(pref.getBoolean(facility.getName()+"FavoriteStatus", false));
+            facility.setOpen(getOpenStatus(facility, Calendar.getInstance()));
         }
 
         return facilities;
@@ -95,7 +97,7 @@ public class MainPresenter {
     }
 
     // Sets the open status of each facility in the Realm instance
-    public void updateOpenStatus() {
+    private void updateOpenStatus() {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(bgRealm -> {
             List<Facility> facilities = bgRealm.where(Facility.class).findAll();
