@@ -16,6 +16,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 
 
+import io.realm.RealmResults;
 import rx.Observable;
 
 import rx.Subscriber;
@@ -94,6 +95,43 @@ public class MainPresenter {
         final Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(bgRealm -> bgRealm.copyToRealmOrUpdate(facilities));
         realm.close();
+
+        removeDeletedFacilities(facilities);
+    }
+
+    // Removes the facilities from Realm that are no longer in the Api
+    private void removeDeletedFacilities(List<Facility> facilities) {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Facility> results = realm.where(Facility.class).findAll();
+
+        // Not a pretty way to do this, but Facilities shouldn't ever have too many items anyway
+        for(Facility r : results) {
+            boolean deleted = true;
+            for(Facility f : facilities) {
+                if( r.getName().equals(f.getName()) ) {
+                    deleted = false;
+                }
+            }
+
+            if(deleted) {
+                removeFacilityFromRealm(r);
+            }
+        }
+
+        realm.close();
+    }
+
+    // Removes the given Facility from Realm
+    private void removeFacilityFromRealm(Facility facility) {
+        Realm realm = Realm.getDefaultInstance();
+
+        final String name = facility.getName();
+        realm.executeTransactionAsync((bgRealm) -> {
+            RealmResults<Facility> results = realm.where(Facility.class).equalTo("mName", name)
+                    .findAll();
+
+            results.deleteAllFromRealm();
+        });
     }
 
     // Sets the open status of each facility in the Realm instance
