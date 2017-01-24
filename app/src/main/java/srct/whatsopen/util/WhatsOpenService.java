@@ -1,4 +1,4 @@
-package srct.whatsopen.service;
+package srct.whatsopen.util;
 
 
 import com.google.gson.ExclusionStrategy;

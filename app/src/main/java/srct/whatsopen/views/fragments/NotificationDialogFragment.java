@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import srct.whatsopen.R;
+import srct.whatsopen.model.NotificationSettings;
 import srct.whatsopen.presenters.NotificationPresenter;
 import srct.whatsopen.views.NotificationView;
 
@@ -94,7 +95,7 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
         super.onViewCreated(view, savedInstanceState);
 
         ButterKnife.bind(this, view);
-        getDialog().setTitle(mName+" Notifications");
+        getDialog().setTitle("Notifications");
 
         if(inEditMode) {
             mPresenter.presentNotifications(mName);
@@ -106,11 +107,13 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
 
     @OnClick(R.id.save_button)
     public void onSave() {
-        mPresenter.saveNotifications(mName, inEditMode, typeOpeningCheckBox.isChecked(),
-                typeClosingCheckBox.isChecked(), intervalOnCheckBox.isChecked(),
-                interval15CheckBox.isChecked(), interval30CheckBox.isChecked(),
-                intervalHourCheckBox.isChecked());
+        mPresenter.saveNotifications(mName, inEditMode, new NotificationSettings(
+                typeOpeningCheckBox.isChecked(), typeClosingCheckBox.isChecked(),
+                intervalOnCheckBox.isChecked(), interval15CheckBox.isChecked(),
+                interval30CheckBox.isChecked(), intervalHourCheckBox.isChecked()
+        ));
 
+        // Changes the Notification button text in DetailActivity
         NotificationDialogListener listener = (NotificationDialogListener) getActivity();
         listener.onSetNotification();
     }
@@ -123,23 +126,22 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
 
     @OnClick(R.id.remove_button)
     public void onRemove() {
-        mPresenter.removeNotifications(mName);
+        mPresenter.removeNotifications(mName, true);
 
+        // Changes the Notification button text in DetailActivity
         NotificationDialogListener listener = (NotificationDialogListener) getActivity();
         listener.onSetNotification();
     }
 
     @Override
-    public void setNotificationChecks(boolean opening, boolean closing,
-                                      boolean interval_on, boolean interval_15,
-                                      boolean interval_30, boolean interval_hour) {
+    public void setNotificationChecks(NotificationSettings n ) {
 
-        typeOpeningCheckBox.setChecked(opening);
-        typeClosingCheckBox.setChecked(closing);
-        intervalOnCheckBox.setChecked(interval_on);
-        interval15CheckBox.setChecked(interval_15);
-        interval30CheckBox.setChecked(interval_30);
-        intervalHourCheckBox.setChecked(interval_hour);
+        typeOpeningCheckBox.setChecked(n.opening);
+        typeClosingCheckBox.setChecked(n.closing);
+        intervalOnCheckBox.setChecked(n.interval_on);
+        interval15CheckBox.setChecked(n.interval_15);
+        interval30CheckBox.setChecked(n.interval_30);
+        intervalHourCheckBox.setChecked(n.interval_hour);
     }
 
     @Override

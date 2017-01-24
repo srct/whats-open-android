@@ -38,14 +38,13 @@ public class FacilityPresenter {
     public void toggleFavorite(Facility facility) {
         final boolean status = !facility.isFavorited();
 
+        mFacilityView.changeFavoriteIcon(status);
+
         Context context = mFacilityView.getContext();
         Resources res = context.getResources();
         int formatName = status ? R.string.toast_set_favorite : R.string.toast_unset_favorite;
         String msg = String.format(res.getString(formatName), facility.getName());
-        Toast toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-        toast.show();
-
-        mFacilityView.changeFavoriteIcon(status);
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 
         // Get Realm instance and SharedPreferences
         Realm realm = Realm.getDefaultInstance();
@@ -163,6 +162,10 @@ public class FacilityPresenter {
         return startTime;
     }
 
+    // Currently only works if the Facility has one OpenTimes with
+    // startDay == 0 and endDay == 6. Should work if the Facility has 7
+    // OpenTimes
+    // TODO: fix
     private boolean facilityDoesNotClose(OpenTimes openTimes) {
         return (openTimes.getStartDay() == 0 && openTimes.getEndDay() == 6 &&
                 openTimes.getStartTime().equals("00:00:00") &&

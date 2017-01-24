@@ -1,8 +1,7 @@
-package srct.whatsopen.service;
+package srct.whatsopen.util;
 
 import java.util.List;
 
-import retrofit2.Call;
 import retrofit2.http.GET;
 
 import rx.Observable;

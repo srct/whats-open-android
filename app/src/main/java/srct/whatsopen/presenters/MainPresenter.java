@@ -3,7 +3,6 @@ package srct.whatsopen.presenters;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.text.ParseException;
@@ -25,10 +24,9 @@ import rx.schedulers.Schedulers;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.model.SpecialSchedule;
-import srct.whatsopen.service.WhatsOpenService;
-import srct.whatsopen.service.WhatsOpenApi;
+import srct.whatsopen.util.WhatsOpenService;
+import srct.whatsopen.util.WhatsOpenApi;
 import srct.whatsopen.views.MainView;
-import srct.whatsopen.views.activities.MainActivity;
 
 public class MainPresenter {
 

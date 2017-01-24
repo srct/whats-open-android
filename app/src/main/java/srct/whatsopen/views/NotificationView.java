@@ -3,13 +3,13 @@ package srct.whatsopen.views;
 
 import android.content.Context;
 
+import srct.whatsopen.model.NotificationSettings;
+
 public interface NotificationView {
 
-    public Context getContext();
+    Context getContext();
 
-    public void setNotificationChecks(boolean opening, boolean closing,
-                                      boolean intervalOn, boolean interval_15,
-                                      boolean interval_30, boolean intervalHour);
+    void setNotificationChecks(NotificationSettings n);
 
-    public void dismiss();
+    void dismiss();
 }

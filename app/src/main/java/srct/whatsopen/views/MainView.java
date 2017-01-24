@@ -5,9 +5,9 @@ import android.content.Context;
 
 public interface MainView {
 
-    public void showProgressBar();
+    void showProgressBar();
 
-    public void dismissProgressBar();
+    void dismissProgressBar();
 
-    public Context getContext();
+    Context getContext();
 }
