@@ -45,6 +45,11 @@ public class NotificationPresenter {
     // Gets the notification settings from SharedPreferences, parses them to booleans,
     // and passes them to the View
     public void presentNotifications(String name) {
+        NotificationSettings n = getNotificationsFromPreferences(name);
+        mNotificationView.setNotificationChecks(n);
+    }
+
+    private NotificationSettings getNotificationsFromPreferences(String name) {
         mNotificationSettings = pref.getStringSet(name+"NotificationSettings", null);
 
         NotificationSettings n = new NotificationSettings();
@@ -61,7 +66,7 @@ public class NotificationPresenter {
             }
         }
 
-        mNotificationView.setNotificationChecks(n);
+        return n;
     }
 
     // Saves the notification settings to SharedPreferences and schedules the Notifications
@@ -89,6 +94,11 @@ public class NotificationPresenter {
 
     // Removes the Notification settings from SharedPreferences
     public void removeNotifications(String name, boolean dismiss) {
+        // Remove the set Notifications
+        NotificationSettings n = getNotificationsFromPreferences(name);
+        deleteNotificationsForFacility(name, n);
+
+        // Remove the NotificationSettings
         SharedPreferences.Editor editor = pref.edit();
         editor.putStringSet(name + "NotificationSettings", null);
         editor.apply();
@@ -206,6 +216,7 @@ public class NotificationPresenter {
         alarmTime = alarmTime - interval;
 
         int id = (name+type+day).hashCode(); // unique id for editing the Notification later
+        Log.i("Set hash for " + name + day + type, ""+id);
 
         // Construct an Intent to execute the NotificationReceiver
         Intent intent = new Intent(mNotificationView.getContext(), NotificationReceiver.class);
@@ -220,6 +231,46 @@ public class NotificationPresenter {
         AlarmManager alarm = (AlarmManager)
                 mNotificationView.getContext().getSystemService(Context.ALARM_SERVICE);
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 7*1440*60000, pendingIntent);
+    }
+
+    private void deleteNotificationsForFacility(String name, NotificationSettings n) {
+        for(int i = 1; i <= 7; i++) {
+            if(n.opening) {
+                if(n.interval_on)
+                    deleteNotification(name, i, "Op_on");
+                if(n.interval_15)
+                    deleteNotification(name, i, "Op_15");
+                if(n.interval_30)
+                    deleteNotification(name, i, "Op_30");
+                if(n.interval_hour)
+                    deleteNotification(name, i, "Op_hour");
+            }
+
+            if(n.closing) {
+                if(n.interval_on)
+                    deleteNotification(name, i, "Cl_on");
+                if(n.interval_15)
+                    deleteNotification(name, i, "Cl_15");
+                if(n.interval_30)
+                    deleteNotification(name, i, "Cl_30");
+                if(n.interval_hour)
+                    deleteNotification(name, i, "Cl_hour");
+            }
+        }
+    }
+
+    private void deleteNotification(String name, int day, String type) {
+        int id = (name+type+day).hashCode(); // unique id for editing the Notification later
+        Log.i("Delete hash for " + name + day + type, ""+id);
+
+        // Get the Intent matching the existing id
+        Intent intent = new Intent(mNotificationView.getContext(), NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mNotificationView.getContext(),
+                id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarm = (AlarmManager)
+                mNotificationView.getContext().getSystemService(Context.ALARM_SERVICE);
+
+        alarm.cancel(pendingIntent);
     }
 
     private Long parseTimeString(String timeString, int day, boolean thisWeek) {
@@ -280,6 +331,7 @@ public class NotificationPresenter {
     }
 
     // Determines if the given time is earlier in the current day
+    // TODO: does not seem to work
     private boolean timeIsPassed(String time, int day) {
         Calendar now = Calendar.getInstance();
 
