@@ -21,4 +21,31 @@ public class NotificationSettings {
     public boolean interval_15;
     public boolean interval_30;
     public boolean interval_hour;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NotificationSettings)) return false;
+
+        NotificationSettings that = (NotificationSettings) o;
+
+        if (opening != that.opening) return false;
+        if (closing != that.closing) return false;
+        if (interval_on != that.interval_on) return false;
+        if (interval_15 != that.interval_15) return false;
+        if (interval_30 != that.interval_30) return false;
+        return interval_hour == that.interval_hour;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (opening ? 1 : 0);
+        result = 31 * result + (closing ? 1 : 0);
+        result = 31 * result + (interval_on ? 1 : 0);
+        result = 31 * result + (interval_15 ? 1 : 0);
+        result = 31 * result + (interval_30 ? 1 : 0);
+        result = 31 * result + (interval_hour ? 1 : 0);
+        return result;
+    }
 }

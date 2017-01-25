@@ -29,7 +29,6 @@ import srct.whatsopen.views.NotificationView;
 public class NotificationPresenter {
 
     private NotificationView mNotificationView;
-    private Set<String> mNotificationSettings;
     private SharedPreferences pref;
 
     public void attachView(NotificationView view) {
@@ -45,16 +44,17 @@ public class NotificationPresenter {
     // Gets the notification settings from SharedPreferences, parses them to booleans,
     // and passes them to the View
     public void presentNotifications(String name) {
-        NotificationSettings n = getNotificationsFromPreferences(name);
+        Set<String> notificationSettingsSet = pref.getStringSet(name+"NotificationSettings", null);
+        NotificationSettings n = getNotificationSettingsFromSet(notificationSettingsSet);
+
         mNotificationView.setNotificationChecks(n);
     }
 
-    private NotificationSettings getNotificationsFromPreferences(String name) {
-        mNotificationSettings = pref.getStringSet(name+"NotificationSettings", null);
+    public NotificationSettings getNotificationSettingsFromSet(Set<String> set) {
 
         NotificationSettings n = new NotificationSettings();
-        if(mNotificationSettings != null) {
-            for (String s : mNotificationSettings) {
+        if(set != null) {
+            for (String s : set) {
                 switch (s) {
                     case "opening":       n.opening       = true;   break;
                     case "closing":       n.closing       = true;   break;
@@ -69,6 +69,20 @@ public class NotificationPresenter {
         return n;
     }
 
+    // Returns a String set parsed from the given NotificationSettings
+    public Set<String> getSetFromNotificationSettings(NotificationSettings n) {
+
+        Set<String> set = new HashSet<>(6);
+        if(n.opening) set.add("opening");
+        if(n.closing) set.add("closing");
+        if(n.interval_on) set.add("interval_on");
+        if(n.interval_15) set.add("interval_15");
+        if(n.interval_30) set.add("interval_30");
+        if(n.interval_hour) set.add("interval_hour");
+
+        return set;
+    }
+    
     // Saves the notification settings to SharedPreferences and schedules the Notifications
     public void saveNotifications(String name, boolean inEditMode, NotificationSettings n) {
 
@@ -95,7 +109,8 @@ public class NotificationPresenter {
     // Removes the Notification settings from SharedPreferences
     public void removeNotifications(String name, boolean dismiss) {
         // Remove the set Notifications
-        NotificationSettings n = getNotificationsFromPreferences(name);
+        Set<String> notificationSettingsSet = pref.getStringSet(name+"NotificationSettings", null);
+        NotificationSettings n = getNotificationSettingsFromSet(notificationSettingsSet);
         deleteNotificationsForFacility(name, n);
 
         // Remove the NotificationSettings
@@ -118,7 +133,7 @@ public class NotificationPresenter {
         if((n.opening || n.closing) &&
                 (n.interval_on || n.interval_15 || n.interval_30 || n.interval_hour)) {
 
-            Set<String> set = setFromNotificationSettings(n);
+            Set<String> set = getSetFromNotificationSettings(n);
 
             SharedPreferences.Editor editor = pref.edit();
             editor.putStringSet(name + "NotificationSettings", set);
@@ -136,20 +151,6 @@ public class NotificationPresenter {
                     "Invalid settings. One of each category must be selected.",
                     Toast.LENGTH_SHORT).show();
         }
-    }
-
-    // Returns a String set parsed from the given booleans
-    private Set<String> setFromNotificationSettings(NotificationSettings n) {
-
-        Set<String> set = new HashSet<>(6);
-        if(n.opening) set.add("opening");
-        if(n.closing) set.add("closing");
-        if(n.interval_on) set.add("interval_on");
-        if(n.interval_15) set.add("interval_15");
-        if(n.interval_30) set.add("interval_30");
-        if(n.interval_hour) set.add("interval_hour");
-
-        return set;
     }
 
     // Sets Alarms for the Facility with the given name
@@ -210,7 +211,7 @@ public class NotificationPresenter {
     private void setAlarm(String name, int day, String type, int intervalMin, String time,
                           String message) {
 
-        Long alarmTime = parseTimeString(time, day, timeIsPassed(time, day));
+        Long alarmTime = parseTimeStringToMs(time, day, Calendar.getInstance());
 
         int interval = intervalMin * 60000; // parse minutes to ms
         alarmTime = alarmTime - interval;
@@ -273,8 +274,14 @@ public class NotificationPresenter {
         alarm.cancel(pendingIntent);
     }
 
-    private Long parseTimeString(String timeString, int day, boolean timeIsPassed) {
-        Calendar alarmCalendar = Calendar.getInstance();
+    // Returns the time in ms from epoch for the given time on the next Day
+    // of the week relative to the given Calendar
+    public Long parseTimeStringToMs(String timeString, int day, Calendar alarmCalendar) {
+
+        // Determine if the time is in the past
+        boolean hasPassed = timeHasPassed(timeString, day, alarmCalendar);
+
+        // Save the current date
         int month = alarmCalendar.get(Calendar.MONTH);
         int dayOfMonth = alarmCalendar.get(Calendar.DAY_OF_MONTH);
         int year = alarmCalendar.get(Calendar.YEAR);
@@ -290,7 +297,7 @@ public class NotificationPresenter {
             alarmCalendar.set(year, month, dayOfMonth);
 
             // to make sure that the alarm isn't set in the past
-            if(timeIsPassed)
+            if(hasPassed)
                 alarmCalendar.add(Calendar.DATE, 1);
 
             // set the day to the next day matching the given day of the week
@@ -331,9 +338,7 @@ public class NotificationPresenter {
     }
 
     // Determines if the given time is earlier in the current day
-    private boolean timeIsPassed(String time, int day) {
-        Calendar now = Calendar.getInstance();
-
+    public boolean timeHasPassed(String time, int day, Calendar now) {
         if(now.get(Calendar.DAY_OF_WEEK) != day)
             return false;
 
