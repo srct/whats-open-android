@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
 import srct.whatsopen.model.NotificationSettings;
 import srct.whatsopen.presenters.NotificationPresenter;
@@ -41,6 +42,7 @@ public class NotificationPresenterUnitTest {
 
     @Test
     public void testParseTimeStringToMs() {
+        now.setTimeZone(TimeZone.getTimeZone("EST"));
         Long timeInMs = mPresenter.parseTimeStringToMs("14:00:00", 3, now);
 
         assertEquals(1484074800000L, timeInMs.longValue());
