@@ -273,7 +273,7 @@ public class NotificationPresenter {
         alarm.cancel(pendingIntent);
     }
 
-    private Long parseTimeString(String timeString, int day, boolean thisWeek) {
+    private Long parseTimeString(String timeString, int day, boolean timeIsPassed) {
         Calendar alarmCalendar = Calendar.getInstance();
         int month = alarmCalendar.get(Calendar.MONTH);
         int dayOfMonth = alarmCalendar.get(Calendar.DAY_OF_MONTH);
@@ -290,7 +290,7 @@ public class NotificationPresenter {
             alarmCalendar.set(year, month, dayOfMonth);
 
             // to make sure that the alarm isn't set in the past
-            if(!thisWeek)
+            if(timeIsPassed)
                 alarmCalendar.add(Calendar.DATE, 1);
 
             // set the day to the next day matching the given day of the week
@@ -331,7 +331,6 @@ public class NotificationPresenter {
     }
 
     // Determines if the given time is earlier in the current day
-    // TODO: does not seem to work
     private boolean timeIsPassed(String time, int day) {
         Calendar now = Calendar.getInstance();
 
@@ -341,7 +340,9 @@ public class NotificationPresenter {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         try {
             Date timeDate = sdf.parse(time);
-            return now.getTime().compareTo(timeDate) > 0;
+            Date currentDate = sdf.parse(sdf.format(now.getTime()));
+
+            return currentDate.compareTo(timeDate) > 0;
         } catch (ParseException pe) {
             pe.printStackTrace();
             return false;
