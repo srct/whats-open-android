@@ -65,14 +65,14 @@ public class FacilityListAdapter extends
             // show the duration that the facility will be open
             setItemPaddingInDp(holder.textLayout, 8);
             holder.durationTextView.setVisibility(View.VISIBLE);
-            holder.nameTextView.setTypeface(null, Typeface.BOLD);
+            //holder.nameTextView.setTypeface(null, Typeface.BOLD);
         } else {
             holder.itemView.setBackgroundColor(ContextCompat
                     .getColor(context, R.color.facilityClosed));
 
             setItemPaddingInDp(holder.textLayout, 15);
             holder.durationTextView.setVisibility(View.GONE);
-            holder.nameTextView.setTypeface(null, Typeface.NORMAL);
+            //holder.nameTextView.setTypeface(null, Typeface.NORMAL);
         }
 
         if(facility.isFavorited()) {

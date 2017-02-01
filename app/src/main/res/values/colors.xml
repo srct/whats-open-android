@@ -8,6 +8,6 @@
     <color name="favoriteButtonOff">#757575</color>
     <color name="favoriteButtonOn">#E8B827</color>
     <color name="facilityClosed">#E0E0E0</color>
-    <color name="facilityOpen">#FAFAFA</color>
+    <color name="facilityOpen">#FFFFFF</color>
     <color name="tabButtonPressed">#4b008542</color>
 </resources>

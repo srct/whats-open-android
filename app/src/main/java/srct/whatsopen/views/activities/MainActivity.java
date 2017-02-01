@@ -2,32 +2,30 @@ package srct.whatsopen.views.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.astuetz.PagerSlidingTabStrip;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import fr.castorflex.android.circularprogressbar.CircularProgressBar;
-
-import io.realm.Realm;
 import srct.whatsopen.R;
-import srct.whatsopen.views.MainView;
 import srct.whatsopen.presenters.MainPresenter;
+import srct.whatsopen.views.MainView;
 import srct.whatsopen.views.adapters.FacilityListFragmentPagerAdapter;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
-    @BindView(R.id.progress_bar) CircularProgressBar mProgressBar;
-    @BindView(R.id.view_pager) ViewPager mViewPager;
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.view_pager)
+    ViewPager mViewPager;
 
     private MainPresenter mPresenter;
 
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_refresh:
                 mPresenter.loadFacilities();
                 return true;

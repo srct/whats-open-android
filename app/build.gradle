@@ -5,7 +5,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "srct.whatsopen"
         minSdkVersion 16
