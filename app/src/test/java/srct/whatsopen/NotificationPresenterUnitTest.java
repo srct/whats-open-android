@@ -41,14 +41,6 @@ public class NotificationPresenterUnitTest {
     }
 
     @Test
-    public void testParseTimeStringToMs() {
-        now.setTimeZone(TimeZone.getTimeZone("EST"));
-        Long timeInMs = mPresenter.parseTimeStringToMs("14:00:00", 3, now);
-
-        assertEquals(1484074800000L, timeInMs.longValue());
-    }
-
-    @Test
     public void testSetFromNotificationSettings() {
         NotificationSettings n = new NotificationSettings(true, true, true, true, true, true);
 

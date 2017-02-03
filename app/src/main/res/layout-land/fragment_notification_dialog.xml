@@ -85,7 +85,7 @@
 
             <Button
                 android:id="@+id/remove_button"
-                android:text="Remove"
+                android:text="Remove All"
                 android:textColor="@color/colorPrimary"
                 android:layout_gravity="center_horizontal"
                 android:visibility="gone"

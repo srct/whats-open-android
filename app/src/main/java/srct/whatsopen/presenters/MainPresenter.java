@@ -125,11 +125,13 @@ public class MainPresenter {
 
         final String name = facility.getName();
         realm.executeTransactionAsync((bgRealm) -> {
-            RealmResults<Facility> results = realm.where(Facility.class).equalTo("mName", name)
+            RealmResults<Facility> results = bgRealm.where(Facility.class).equalTo("mName", name)
                     .findAll();
 
             results.deleteAllFromRealm();
         });
+
+        realm.close();
     }
 
     // Sets the open status of each facility in the Realm instance

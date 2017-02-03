@@ -131,7 +131,7 @@
 
         <Button
             android:id="@+id/remove_button"
-            android:text="Remove"
+            android:text="Remove All"
             android:textColor="@color/colorPrimary"
             android:layout_toRightOf="@id/save_button"
             android:layout_toEndOf="@id/save_button"
