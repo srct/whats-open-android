@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
 import srct.whatsopen.R;
 
@@ -31,5 +32,6 @@ public class NotificationService extends IntentService {
                 getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(id, builder.build());
+        WakefulBroadcastReceiver.completeWakefulIntent(intent);
     }
 }

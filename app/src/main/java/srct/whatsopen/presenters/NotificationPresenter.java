@@ -113,7 +113,7 @@ public class NotificationPresenter {
                     bgRealm -> bgRealm.copyToRealmOrUpdate(n),
                     () -> {
                         // TODO: make async
-                        createAlarmsForFacility(n);
+                        createAlarmsForFacility(mNotificationView.getContext(), n);
 
                         Toast.makeText(mNotificationView.getContext(),
                                 message, Toast.LENGTH_SHORT).show();
@@ -130,7 +130,8 @@ public class NotificationPresenter {
     }
 
     // Sets Alarms for the Facility with the given name
-    private void createAlarmsForFacility(NotificationSettings notificationSettings) {
+    public static void createAlarmsForFacility(Context context,
+                                               NotificationSettings notificationSettings) {
         Realm realm = Realm.getDefaultInstance();
         Facility facility = realm.where(Facility.class)
                 .equalTo("mName", notificationSettings.name).findFirst();
@@ -140,13 +141,13 @@ public class NotificationPresenter {
             return;
 
         for(OpenTimes o : openTimesList) {
-            setAlarmsFromOpenTimes(o, notificationSettings);
+            setAlarmsFromOpenTimes(context, o, notificationSettings);
         }
 
         realm.close();
     }
 
-    private void setAlarmsFromOpenTimes(OpenTimes openTimes,
+    private static void setAlarmsFromOpenTimes(Context context, OpenTimes openTimes,
                           NotificationSettings n) {
         String name = n.name;
 
@@ -156,38 +157,38 @@ public class NotificationPresenter {
 
             if(n.opening) {
                 if(n.interval_on)
-                    setAlarm(name, day, "Op_on", 0, openTimes.getStartTime(),
+                    setAlarm(context, name, day, "Op_on", 0, openTimes.getStartTime(),
                             "Opens now");
                 if(n.interval_15)
-                    setAlarm(name, day, "Op_15", 15, openTimes.getStartTime(),
+                    setAlarm(context, name, day, "Op_15", 15, openTimes.getStartTime(),
                             "Opens in 15 minutes");
                 if(n.interval_30)
-                    setAlarm(name, day, "Op_30", 30, openTimes.getStartTime(),
+                    setAlarm(context, name, day, "Op_30", 30, openTimes.getStartTime(),
                             "Opens in 30 minutes");
                 if(n.interval_hour)
-                    setAlarm(name, day, "Op_hour", 60, openTimes.getStartTime(),
+                    setAlarm(context, name, day, "Op_hour", 60, openTimes.getStartTime(),
                             "Opens in an hour");
             }
 
             if(n.closing) {
                 if(n.interval_on)
-                    setAlarm(name, day, "Cl_on", 0, openTimes.getEndTime(),
+                    setAlarm(context, name, day, "Cl_on", 0, openTimes.getEndTime(),
                             "Closes now");
                 if(n.interval_15)
-                    setAlarm(name, day, "Cl_15", 15, openTimes.getEndTime(),
+                    setAlarm(context, name, day, "Cl_15", 15, openTimes.getEndTime(),
                             "Closes in 15 minutes");
                 if(n.interval_30)
-                    setAlarm(name, day, "Cl_30", 30, openTimes.getEndTime(),
+                    setAlarm(context, name, day, "Cl_30", 30, openTimes.getEndTime(),
                             "Closes in 30 minutes");
                 if(n.interval_hour)
-                    setAlarm(name, day, "Cl_hour", 60, openTimes.getEndTime(),
+                    setAlarm(context, name, day, "Cl_hour", 60, openTimes.getEndTime(),
                             "Closes in an hour");
             }
         }
     }
 
-    private void setAlarm(String name, int day, String type, int intervalMin, String time,
-                          String message) {
+    private static void setAlarm(Context context, String name, int day, String type,
+                                 int intervalMin, String time, String message) {
 
         Long alarmTime = parseTimeStringToMs(time, day, Calendar.getInstance());
 
@@ -198,17 +199,16 @@ public class NotificationPresenter {
         Log.i("Set hash for " + name + day + type, ""+id);
 
         // Construct an Intent to execute the NotificationReceiver
-        Intent intent = new Intent(mNotificationView.getContext(), NotificationReceiver.class);
+        Intent intent = new Intent(context, NotificationReceiver.class);
         intent.putExtra("title", name);
         intent.putExtra("text", message);
 
         // Create a PendingIntent that will be triggered when the alarm goes off
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mNotificationView.getContext(),
-                id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Set up alarm to repeat every week
-        AlarmManager alarm = (AlarmManager)
-                mNotificationView.getContext().getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 7*1440*60000, pendingIntent);
     }
 
@@ -262,7 +262,7 @@ public class NotificationPresenter {
 
     // Returns the time in ms from epoch for the given time on the next Day
     // of the week relative to the given Calendar
-    private Long parseTimeStringToMs(String timeString, int day, Calendar alarmCalendar) {
+    private static Long parseTimeStringToMs(String timeString, int day, Calendar alarmCalendar) {
 
         // Determine if the time is in the past
         boolean hasPassed = timeHasPassed(timeString, day, alarmCalendar);
@@ -299,7 +299,7 @@ public class NotificationPresenter {
     }
 
     // Returns the active schedule given the current date
-    private RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
+    private static RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
         RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -324,7 +324,7 @@ public class NotificationPresenter {
     }
 
     // Determines if the given time is earlier in the current day
-    public boolean timeHasPassed(String time, int day, Calendar now) {
+    public static boolean timeHasPassed(String time, int day, Calendar now) {
         if(now.get(Calendar.DAY_OF_WEEK) != day)
             return false;
 

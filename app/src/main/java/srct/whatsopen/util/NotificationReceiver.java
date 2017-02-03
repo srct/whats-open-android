@@ -1,11 +1,11 @@
 package srct.whatsopen.util;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
 
-public class NotificationReceiver extends BroadcastReceiver {
+public class NotificationReceiver extends WakefulBroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -14,6 +14,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         i.putExtra("title", intent.getStringExtra("title"));
         i.putExtra("text", intent.getStringExtra("text"));
 
-        context.startService(i);
+        //context.startService(i);
+        startWakefulService(context, i);
     }
 }
