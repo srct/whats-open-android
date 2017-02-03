@@ -39,41 +39,4 @@ public class NotificationPresenterUnitTest {
 
         assertFalse(hasPassed);
     }
-
-    @Test
-    public void testSetFromNotificationSettings() {
-        NotificationSettings n = new NotificationSettings(true, true, true, true, true, true);
-
-        // Set up expected set
-        Set<String> expected = new HashSet<>(6);
-        expected.add("opening");
-        expected.add("closing");
-        expected.add("interval_on");
-        expected.add("interval_15");
-        expected.add("interval_30");
-        expected.add("interval_hour");
-
-        Set<String> actual = mPresenter.getSetFromNotificationSettings(n);
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testNotificationSettingsFromSet() {
-        NotificationSettings expected = new NotificationSettings(true, true,
-                true, true, true, true);
-
-        // Set up set
-        Set<String> set = new HashSet<>(6);
-        set.add("opening");
-        set.add("closing");
-        set.add("interval_on");
-        set.add("interval_15");
-        set.add("interval_30");
-        set.add("interval_hour");
-
-        NotificationSettings actual = mPresenter.getNotificationSettingsFromSet(set);
-
-        assertEquals(expected, actual);
-    }
 }
