@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -78,7 +79,7 @@ public class FacilityPresenter {
         String durationMessage;
 
         if(facility.isOpen()) {
-            if(facilityDoesNotClose(openTimesList.first())) {
+            if(facilityDoesNotClose(openTimesList)) {
                 return "Open 24/7";
             }
 
@@ -162,14 +163,26 @@ public class FacilityPresenter {
         return startTime;
     }
 
-    // Currently only works if the Facility has one OpenTimes with
-    // startDay == 0 and endDay == 6. Should work if the Facility has 7
-    // OpenTimes
-    // TODO: fix
-    private boolean facilityDoesNotClose(OpenTimes openTimes) {
-        return (openTimes.getStartDay() == 0 && openTimes.getEndDay() == 6 &&
-                openTimes.getStartTime().equals("00:00:00") &&
-                openTimes.getEndTime().equals("23:59:59"));
+    private boolean facilityDoesNotClose(List<OpenTimes> openTimesList) {
+        boolean doesNotClose = false;
+
+        int counter = 0;
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartTime().equals("00:00:00") && o.getEndTime().equals("23:59:59")
+                    || o.getEndTime().equals("00:00:00")) {
+                doesNotClose = true;
+            }
+
+            // check to make sure the facility is open every day of the week
+            // so, if the start day is 0 and the end day is 6, 6 - 0 + 1 == 7
+            counter += (o.getEndDay() - o.getStartDay()) + 1;
+        }
+
+        if(counter != 7) {
+            doesNotClose = false;
+        }
+
+        return doesNotClose;
     }
 
     // Parses 24 hour formatted time String to 12 hour formatted time String
@@ -215,7 +228,7 @@ public class FacilityPresenter {
         if(openTimesList.size() == 0)
            return "No schedule available";
 
-        if(facilityDoesNotClose(openTimesList.first()))
+        if(facilityDoesNotClose(openTimesList))
             return "This facility is always open";
 
         StringBuilder scheduleString = new StringBuilder();

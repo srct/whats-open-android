@@ -163,6 +163,13 @@ public class MainPresenter {
         if(currentOpenTimes == null)
             return false;
 
+        // for some reason in the Api this signifies a facility that's open 24/7, sometimes
+        // praying for that api v2
+        if(currentOpenTimes.getStartTime().equals("00:00:00")
+                && currentOpenTimes.getEndTime().equals("00:00:00")) {
+            return true;
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
         try {
