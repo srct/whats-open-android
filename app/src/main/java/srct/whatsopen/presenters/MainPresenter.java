@@ -83,6 +83,7 @@ public class MainPresenter {
             // Query SharedReferences for each Facility's favorite status. defaults to false
             facility.setFavorited(pref.getBoolean(facility.getName()+"FavoriteStatus", false));
             facility.setOpen(getOpenStatus(facility, Calendar.getInstance()));
+            facility.setStatusDuration(getStatusDuration(facility, Calendar.getInstance()));
         }
 
         return facilities;
@@ -134,13 +135,14 @@ public class MainPresenter {
         realm.close();
     }
 
-    // Sets the open status of each facility in the Realm instance
+    // Sets the open status and status duration of each facility in the Realm instance
     private void updateOpenStatus() {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(bgRealm -> {
             List<Facility> facilities = bgRealm.where(Facility.class).findAll();
             for(Facility f : facilities) {
                 f.setOpen(getOpenStatus(f, Calendar.getInstance()));
+                f.setStatusDuration(getStatusDuration(f, Calendar.getInstance()));
             }
         }, null, null);
         realm.close();
@@ -186,6 +188,104 @@ public class MainPresenter {
             pe.printStackTrace();
             return false;
         }
+    }
+
+    // Finds the next time the facility closes or opens and returns it
+    public String getStatusDuration(Facility facility, Calendar now) {
+        RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
+
+        if(openTimesList == null)
+            return "";
+
+        if(openTimesList.size() == 0)
+            return "No open time on schedule";
+
+        int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
+        String durationMessage;
+
+        if(facility.isOpen()) {
+            if(FacilityPresenter.facilityDoesNotClose(openTimesList)) {
+                return "Open 24/7";
+            }
+
+            String closingTime = getCurrentEndTime(openTimesList, currentDay);
+            closingTime = FacilityPresenter.parseTo12HourTime(closingTime);
+            durationMessage = "Closes at " + closingTime;
+
+            return durationMessage;
+        }
+
+        // Check if the facility opens later today
+        if(openTimesContains(openTimesList, currentDay)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            try {
+                Date currentTime = sdf.parse(sdf.format(now.getTime()));
+                Date startTime = sdf.parse(getCurrentStartTime(openTimesList, currentDay));
+
+                if(currentTime.compareTo(startTime) < 0) {
+                    String openingTime = getCurrentStartTime(openTimesList, currentDay);
+                    openingTime = FacilityPresenter.parseTo12HourTime(openingTime);
+
+                    return "Opens today at " + openingTime;
+                }
+            } catch (ParseException pe) {
+                pe.printStackTrace();
+                return "";
+            }
+        }
+
+        // Else return the opening time of the next day
+
+        int nextDay = findNextDay(openTimesList, currentDay);
+        String nextDayStr = FacilityPresenter.parseIntToDay(nextDay);
+
+        String openingTime = getCurrentStartTime(openTimesList, nextDay);
+        openingTime = FacilityPresenter.parseTo12HourTime(openingTime);
+
+        durationMessage = "Opens next on " + nextDayStr + " at " + openingTime;
+
+        return durationMessage;
+    }
+
+    private boolean openTimesContains(RealmList<OpenTimes> openTimesList, int currentDay) {
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
+                return true;
+        }
+        return false;
+    }
+
+    // Returns the next open day in the list of OpenTimes
+    private int findNextDay(RealmList<OpenTimes> openTimesList, int current) {
+        int nextDay = openTimesList.first().getStartDay();
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() > current) {
+                nextDay = o.getStartDay();
+                break;
+            }
+        }
+
+        return nextDay;
+    }
+
+    // Returns the end time for the current day
+    private String getCurrentEndTime(RealmList<OpenTimes> openTimesList, int currentDay) {
+        String endTime = "";
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
+                endTime = o.getEndTime();
+        }
+        return endTime;
+    }
+
+    // Returns the end time for the current day
+    private String getCurrentStartTime(RealmList<OpenTimes> openTimesList, int currentDay) {
+        String startTime = "";
+        for(OpenTimes o : openTimesList) {
+            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
+                startTime = o.getStartTime();
+        }
+        return startTime;
     }
 
     // Returns the active schedule given the current date

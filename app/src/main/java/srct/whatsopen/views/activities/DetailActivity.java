@@ -147,8 +147,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
         String statusText = mFacility.isOpen() ? "Open" : "Closed";
         openStatusTextView.setText(statusText);
 
-        openDurationTextView.setText(mPresenter.getStatusDuration(mFacility,
-                Calendar.getInstance()));
+        openDurationTextView.setText(mFacility.getStatusDuration());
 
         locationTextView.setText(mFacility.getLocation());
 

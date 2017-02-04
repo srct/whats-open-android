@@ -121,7 +121,7 @@ public class FacilityListAdapter extends
             mPresenter = new FacilityPresenter();
             mPresenter.attachView(this);
 
-            duration = mPresenter.getStatusDuration(data, Calendar.getInstance());
+            duration = data.getStatusDuration();
             durationTextView.setText(duration);
         }
 
