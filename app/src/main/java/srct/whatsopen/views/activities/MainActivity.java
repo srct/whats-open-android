@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 mPresenter.loadFacilities();
                 return true;
             case R.id.action_settings:
+                expandSettingsActivity();
                 return true;
             case R.id.action_about:
                 expandAboutActivity();
@@ -109,6 +110,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
     // Opens the About page for the app
     private void expandAboutActivity() {
         Intent i = new Intent(this, AboutActivity.class);
+        startActivity(i);
+    }
+
+    // Opens the About page for the app
+    private void expandSettingsActivity() {
+        Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
 }
