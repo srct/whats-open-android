@@ -5,7 +5,7 @@ import android.content.Context;
 
 public interface FacilityView {
 
-    public Context getContext();
+    Context getContext();
 
-    public void changeFavoriteIcon(boolean favoriteStatus);
+    void changeFavoriteIcon(boolean favoriteStatus);
 }

@@ -124,6 +124,20 @@
             android:text="Cancel"
             android:textColor="@color/colorPrimary"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            style="?android:borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/remove_button"
+            android:text="Remove All"
+            android:textColor="@color/colorPrimary"
+            android:layout_toRightOf="@id/save_button"
+            android:layout_toEndOf="@id/save_button"
+            android:layout_toStartOf="@id/cancel_button"
+            android:layout_toLeftOf="@id/cancel_button"
+            android:visibility="gone"
             style="?android:borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
