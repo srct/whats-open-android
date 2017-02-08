@@ -26,8 +26,8 @@
         android:title="@string/title_notification">
 
         <CheckBoxPreference
-            android:key="turn_off_notifications_preference"
-            android:title="@string/title_turn_off_notifications" />
+            android:key="turn_off_vibrations_preference"
+            android:title="@string/title_turn_off_vibrations" />
 
     </PreferenceCategory>
 
