@@ -1,19 +1,23 @@
 package srct.whatsopen.views.activities;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import butterknife.ButterKnife;
+import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 import srct.whatsopen.views.fragments.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +29,11 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_settings, new SettingsFragment())
                 .commit();
-    }
 
+        setPreferenceChangeListener();
+
+        MyApplication.setRotation(this);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,6 +62,21 @@ public class SettingsActivity extends AppCompatActivity {
         // Display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    private void setPreferenceChangeListener() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        SharedPreferences.OnSharedPreferenceChangeListener prefListener =
+                new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                        if(key.equals("turn_off_rotation_preference")) {
+                            MyApplication.setRotation(SettingsActivity.this);
+                        }
+                    }
+                };
+
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(prefListener);
     }
 }
 

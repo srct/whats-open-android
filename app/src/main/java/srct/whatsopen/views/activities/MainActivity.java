@@ -19,6 +19,7 @@ import butterknife.ButterKnife;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 
 import io.realm.Realm;
+import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 import srct.whatsopen.views.MainView;
 import srct.whatsopen.presenters.MainPresenter;
@@ -59,6 +60,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
         tabStrip.setViewPager(mViewPager);
 
         mViewPager.setCurrentItem(1);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.setRotation(this);
     }
 
     @Override

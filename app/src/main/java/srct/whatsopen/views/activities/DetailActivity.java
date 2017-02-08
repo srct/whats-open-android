@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
+import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.NotificationSettings;
@@ -69,6 +70,12 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
         fillTextViews();
 
         setNotificationStatus();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.setRotation(this);
     }
 
     @Override
