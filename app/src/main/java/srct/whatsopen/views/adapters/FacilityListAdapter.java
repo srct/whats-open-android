@@ -3,8 +3,10 @@ package srct.whatsopen.views.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -57,22 +59,16 @@ public class FacilityListAdapter extends
     public void onBindViewHolder(ViewHolder holder, int position) {
         Facility facility = getData().get(position);
 
+        displayStatusDurationText(facility, holder);
+
+        // highlight the open facilities
         if(facility.isOpen()) {
             // set the RV cell to be highlighted
             holder.itemView.setBackgroundColor(ContextCompat
                     .getColor(context, R.color.facilityOpen));
-
-            // show the duration that the facility will be open
-            setItemPaddingInDp(holder.textLayout, 8);
-            holder.durationTextView.setVisibility(View.VISIBLE);
-            holder.nameTextView.setTypeface(null, Typeface.BOLD);
         } else {
             holder.itemView.setBackgroundColor(ContextCompat
                     .getColor(context, R.color.facilityClosed));
-
-            setItemPaddingInDp(holder.textLayout, 15);
-            holder.durationTextView.setVisibility(View.GONE);
-            holder.nameTextView.setTypeface(null, Typeface.NORMAL);
         }
 
         if(facility.isFavorited()) {
@@ -85,6 +81,42 @@ public class FacilityListAdapter extends
         holder.setData(facility);
         TextView textView = holder.nameTextView;
         textView.setText(facility.getName());
+    }
+
+    // Sets the duration text according to the user's settings
+    private void displayStatusDurationText(Facility facility, ViewHolder holder) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String setting = preferences.getString("list_view_information_preference",
+                "display_duration_both");
+
+        switch(setting) {
+            case "display_duration_open":
+                setStatusDurationText(holder, facility.isOpen());
+                break;
+            case "display_duration_closed":
+                setStatusDurationText(holder, !facility.isOpen());
+                break;
+            case "display_duration_none":
+                setStatusDurationText(holder, false);
+                break;
+            case "display_duration_both":default:
+                setStatusDurationText(holder, true);
+                break;
+        }
+
+    }
+
+    private void setStatusDurationText(ViewHolder holder, boolean showDuration) {
+        if(showDuration) {
+            // display the duration text
+            setItemPaddingInDp(holder.textLayout, 8);
+            holder.durationTextView.setVisibility(View.VISIBLE);
+            holder.nameTextView.setTypeface(null, Typeface.BOLD);
+        } else {
+            setItemPaddingInDp(holder.textLayout, 15);
+            holder.durationTextView.setVisibility(View.GONE);
+            holder.nameTextView.setTypeface(null, Typeface.NORMAL);
+        }
     }
 
     // Helper method to set the facility item layout's padding
