@@ -1,6 +1,7 @@
 package srct.whatsopen.views.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
+import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.NotificationSettings;
@@ -71,6 +73,12 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.setRotation(this);
+    }
+
+    @Override
     protected void onDestroy() {
         mPresenter.detachView();
         super.onDestroy();
@@ -89,13 +97,11 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
             case R.id.action_favorite:
                 mPresenter.toggleFavorite(mFacility);
                 return true;
             case R.id.action_settings:
+                expandSettingsActivity();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -175,5 +181,11 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     @Override
     public void onSetNotification() {
         setNotificationStatus();
+    }
+
+    // Opens the About page for the app
+    private void expandSettingsActivity() {
+        Intent i = new Intent(this, SettingsActivity.class);
+        startActivity(i);
     }
 }

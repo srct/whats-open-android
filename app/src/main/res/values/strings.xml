@@ -2,4 +2,25 @@
     <string name="app_name">What\'s Open</string>
     <string name="toast_set_favorite">Added %s to Favorites</string>
     <string name="toast_unset_favorite">Removed %s from Favorites</string>
+
+    <!-- Strings from PreferenceFragment -->
+    <string name="title_list_view">List View Preferences</string>
+    <string name="title_list_view_information">Duration display</string>
+    <string name="title_rotation">Rotation Preferences</string>
+    <string name="title_turn_off_rotation">Turn off rotation</string>
+    <string name="title_notification">Notification Preferences</string>
+    <string name="title_turn_off_vibrations">Turn off vibrations</string>
+    <string-array name="entries_list_view_information_preference">
+        <item>Both</item>
+        <item>Only for open Facilities</item>
+        <item>Only for closed Facilities</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="entryvalues_list_view_information_preference">
+        <item>display_duration_both</item>
+        <item>display_duration_open</item>
+        <item>display_duration_closed</item>
+        <item>display_duration_none</item>
+    </string-array>
+
 </resources>

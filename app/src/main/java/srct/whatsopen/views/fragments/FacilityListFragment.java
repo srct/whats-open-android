@@ -1,11 +1,13 @@
 package srct.whatsopen.views.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +34,7 @@ public class FacilityListFragment extends android.support.v4.app.Fragment implem
     private MainPresenter mPresenter;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeContainer;
+    private SharedPreferences.OnSharedPreferenceChangeListener mListener;
 
     public static FacilityListFragment newInstance(String mode) {
         Bundle args = new Bundle();
@@ -50,6 +53,8 @@ public class FacilityListFragment extends android.support.v4.app.Fragment implem
         mRealm = Realm.getDefaultInstance();
         mPresenter = new MainPresenter();
         mPresenter.attachView(this);
+
+        setPreferenceChangeListener();
     }
 
     @Override
@@ -133,5 +138,20 @@ public class FacilityListFragment extends android.support.v4.app.Fragment implem
     @Override
     public Context getContext() {
         return getActivity();
+    }
+
+    // Redraws RecyclerView if the settings have changed for it
+    private void setPreferenceChangeListener() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if(key.equals("list_view_information_preference")) {
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                }
+            }
+        };
+
+        preferences.registerOnSharedPreferenceChangeListener(mListener);
     }
 }
