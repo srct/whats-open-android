@@ -19,6 +19,7 @@ import java.util.Set;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmResults;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.NotificationSettings;
 import srct.whatsopen.model.OpenTimes;
@@ -29,12 +30,9 @@ import srct.whatsopen.views.NotificationView;
 public class NotificationPresenter {
 
     private NotificationView mNotificationView;
-    private SharedPreferences pref;
 
     public void attachView(NotificationView view) {
         mNotificationView = view;
-        pref = PreferenceManager
-                .getDefaultSharedPreferences(mNotificationView.getContext());
     }
 
     public void detachView() {
@@ -44,64 +42,35 @@ public class NotificationPresenter {
     // Gets the notification settings from SharedPreferences, parses them to booleans,
     // and passes them to the View
     public void presentNotifications(String name) {
-        Set<String> notificationSettingsSet = pref.getStringSet(name+"NotificationSettings", null);
-        NotificationSettings n = getNotificationSettingsFromSet(notificationSettingsSet);
+        Realm realm = Realm.getDefaultInstance();
+        NotificationSettings n = realm.where(NotificationSettings.class).equalTo("name", name)
+                .findFirst();
+        realm.close();
 
-        mNotificationView.setNotificationChecks(n);
-    }
-
-    public NotificationSettings getNotificationSettingsFromSet(Set<String> set) {
-
-        NotificationSettings n = new NotificationSettings();
-        if(set != null) {
-            for (String s : set) {
-                switch (s) {
-                    case "opening":       n.opening       = true;   break;
-                    case "closing":       n.closing       = true;   break;
-                    case "interval_on":   n.interval_on   = true;   break;
-                    case "interval_15":   n.interval_15   = true;   break;
-                    case "interval_30":   n.interval_30   = true;   break;
-                    case "interval_hour": n.interval_hour = true;   break;
-                }
-            }
+        if(n != null) {
+            mNotificationView.setNotificationChecks(n);
         }
-
-        return n;
     }
 
-    // Returns a String set parsed from the given NotificationSettings
-    public Set<String> getSetFromNotificationSettings(NotificationSettings n) {
-
-        Set<String> set = new HashSet<>(6);
-        if(n.opening) set.add("opening");
-        if(n.closing) set.add("closing");
-        if(n.interval_on) set.add("interval_on");
-        if(n.interval_15) set.add("interval_15");
-        if(n.interval_30) set.add("interval_30");
-        if(n.interval_hour) set.add("interval_hour");
-
-        return set;
-    }
-    
     // Saves the notification settings to SharedPreferences and schedules the Notifications
-    public void saveNotifications(String name, boolean inEditMode, NotificationSettings n) {
+    public void saveNotifications(boolean inEditMode, NotificationSettings n) {
 
         if(inEditMode) {
-            editNotifications(name, n);
+            editNotifications(n);
         } else {
-            setNotifications("Notifications set", name, n);
+            setNotifications("Notifications set", n);
         }
     }
 
     // If no checkboxes are set, removes Notifications. Else, sets new Notifications
-    private void editNotifications(String name, NotificationSettings n) {
+    private void editNotifications(NotificationSettings n) {
 
         if(!n.opening && !n.closing && !n.interval_on && !n.interval_15 && !n.interval_30 &&
                 !n.interval_hour) {
-            removeNotifications(name, true);
+            removeNotifications(n.name, true);
         } else {
-            removeNotifications(name, false);
-            setNotifications("Notifications edited", name, n);
+            removeNotifications(n.name, false);
+            setNotifications("Notifications edited", n);
         }
 
     }
@@ -109,42 +78,49 @@ public class NotificationPresenter {
     // Removes the Notification settings from SharedPreferences
     public void removeNotifications(String name, boolean dismiss) {
         // Remove the set Notifications
-        Set<String> notificationSettingsSet = pref.getStringSet(name+"NotificationSettings", null);
-        NotificationSettings n = getNotificationSettingsFromSet(notificationSettingsSet);
-        deleteNotificationsForFacility(name, n);
+        deleteNotificationsForFacility(name);
 
-        // Remove the NotificationSettings
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putStringSet(name + "NotificationSettings", null);
-        editor.apply();
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync((bgRealm) -> {
+            NotificationSettings results = bgRealm.where(NotificationSettings.class)
+                    .equalTo("name", name)
+                    .findFirst();
 
-        if(dismiss) {
-            Toast.makeText(mNotificationView.getContext(), "Notifications removed",
-                    Toast.LENGTH_SHORT).show();
+            if(results != null) {
+                results.deleteFromRealm();
+            }
+        }, () -> { // on success
+            if(dismiss) {
+                Toast.makeText(mNotificationView.getContext(), "Notifications removed",
+                        Toast.LENGTH_SHORT).show();
 
-            mNotificationView.dismiss();
-        }
+                mNotificationView.dismiss();
+            }
+        });
+
+        realm.close();
     }
 
     // Saves the Notification settings to SharedPreferences
-    private void setNotifications(String message, String name, NotificationSettings n) {
+    private void setNotifications(String message, NotificationSettings n) {
 
         // if the Notifications are valid (i.e. one of each category is checked)
         if((n.opening || n.closing) &&
                 (n.interval_on || n.interval_15 || n.interval_30 || n.interval_hour)) {
 
-            Set<String> set = getSetFromNotificationSettings(n);
+            Realm realm = Realm.getDefaultInstance();
+            realm.executeTransactionAsync(
+                    bgRealm -> bgRealm.copyToRealmOrUpdate(n),
+                    () -> {
+                        // TODO: make async
+                        createAlarmsForFacility(mNotificationView.getContext(), n);
 
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putStringSet(name + "NotificationSettings", set);
-            editor.apply();
+                        Toast.makeText(mNotificationView.getContext(),
+                                message, Toast.LENGTH_SHORT).show();
 
-            // TODO: make async
-            createAlarmsForFacility(name, n);
-
-            Toast.makeText(mNotificationView.getContext(), message, Toast.LENGTH_SHORT).show();
-
-            mNotificationView.dismiss();
+                        mNotificationView.dismiss();
+                    });
+            realm.close();
         } else {
             // Show error message
             Toast.makeText(mNotificationView.getContext(),
@@ -154,23 +130,26 @@ public class NotificationPresenter {
     }
 
     // Sets Alarms for the Facility with the given name
-    private void createAlarmsForFacility(String name, NotificationSettings notificationSettings) {
+    public static void createAlarmsForFacility(Context context,
+                                               NotificationSettings notificationSettings) {
         Realm realm = Realm.getDefaultInstance();
-        Facility facility = realm.where(Facility.class).equalTo("mName", name).findFirst();
+        Facility facility = realm.where(Facility.class)
+                .equalTo("mName", notificationSettings.name).findFirst();
         RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, Calendar.getInstance());
 
         if(openTimesList == null || openTimesList.size() == 0)
             return;
 
         for(OpenTimes o : openTimesList) {
-            setAlarmsFromOpenTimes(name, o, notificationSettings);
+            setAlarmsFromOpenTimes(context, o, notificationSettings);
         }
 
         realm.close();
     }
 
-    private void setAlarmsFromOpenTimes(String name, OpenTimes openTimes,
+    private static void setAlarmsFromOpenTimes(Context context, OpenTimes openTimes,
                           NotificationSettings n) {
+        String name = n.name;
 
         for(int i = openTimes.getStartDay(); i <= openTimes.getEndDay(); i++) {
             // Parse Python day of week int to Calendar day of week
@@ -178,38 +157,38 @@ public class NotificationPresenter {
 
             if(n.opening) {
                 if(n.interval_on)
-                    setAlarm(name, day, "Op_on", 0, openTimes.getStartTime(),
+                    setAlarm(context, name, day, "Op_on", 0, openTimes.getStartTime(),
                             "Opens now");
                 if(n.interval_15)
-                    setAlarm(name, day, "Op_15", 15, openTimes.getStartTime(),
+                    setAlarm(context, name, day, "Op_15", 15, openTimes.getStartTime(),
                             "Opens in 15 minutes");
                 if(n.interval_30)
-                    setAlarm(name, day, "Op_30", 30, openTimes.getStartTime(),
+                    setAlarm(context, name, day, "Op_30", 30, openTimes.getStartTime(),
                             "Opens in 30 minutes");
                 if(n.interval_hour)
-                    setAlarm(name, day, "Op_hour", 60, openTimes.getStartTime(),
+                    setAlarm(context, name, day, "Op_hour", 60, openTimes.getStartTime(),
                             "Opens in an hour");
             }
 
             if(n.closing) {
                 if(n.interval_on)
-                    setAlarm(name, day, "Cl_on", 0, openTimes.getEndTime(),
+                    setAlarm(context, name, day, "Cl_on", 0, openTimes.getEndTime(),
                             "Closes now");
                 if(n.interval_15)
-                    setAlarm(name, day, "Cl_15", 15, openTimes.getEndTime(),
+                    setAlarm(context, name, day, "Cl_15", 15, openTimes.getEndTime(),
                             "Closes in 15 minutes");
                 if(n.interval_30)
-                    setAlarm(name, day, "Cl_30", 30, openTimes.getEndTime(),
+                    setAlarm(context, name, day, "Cl_30", 30, openTimes.getEndTime(),
                             "Closes in 30 minutes");
                 if(n.interval_hour)
-                    setAlarm(name, day, "Cl_hour", 60, openTimes.getEndTime(),
+                    setAlarm(context, name, day, "Cl_hour", 60, openTimes.getEndTime(),
                             "Closes in an hour");
             }
         }
     }
 
-    private void setAlarm(String name, int day, String type, int intervalMin, String time,
-                          String message) {
+    private static void setAlarm(Context context, String name, int day, String type,
+                                 int intervalMin, String time, String message) {
 
         Long alarmTime = parseTimeStringToMs(time, day, Calendar.getInstance());
 
@@ -220,47 +199,54 @@ public class NotificationPresenter {
         Log.i("Set hash for " + name + day + type, ""+id);
 
         // Construct an Intent to execute the NotificationReceiver
-        Intent intent = new Intent(mNotificationView.getContext(), NotificationReceiver.class);
+        Intent intent = new Intent(context, NotificationReceiver.class);
         intent.putExtra("title", name);
         intent.putExtra("text", message);
 
         // Create a PendingIntent that will be triggered when the alarm goes off
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mNotificationView.getContext(),
-                id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Set up alarm to repeat every week
-        AlarmManager alarm = (AlarmManager)
-                mNotificationView.getContext().getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 7*1440*60000, pendingIntent);
     }
 
-    private void deleteNotificationsForFacility(String name, NotificationSettings n) {
+    private void deleteNotificationsForFacility(String name) {
+        Realm realm = Realm.getDefaultInstance();
+        NotificationSettings n = realm.where(NotificationSettings.class).equalTo("name", name)
+                .findFirst();
+        realm.close();
+
+        if(n == null)
+            return;
+
         for(int i = 1; i <= 7; i++) {
             if(n.opening) {
                 if(n.interval_on)
-                    deleteNotification(name, i, "Op_on");
+                    cancelNotificationAlarms(name, i, "Op_on");
                 if(n.interval_15)
-                    deleteNotification(name, i, "Op_15");
+                    cancelNotificationAlarms(name, i, "Op_15");
                 if(n.interval_30)
-                    deleteNotification(name, i, "Op_30");
+                    cancelNotificationAlarms(name, i, "Op_30");
                 if(n.interval_hour)
-                    deleteNotification(name, i, "Op_hour");
+                    cancelNotificationAlarms(name, i, "Op_hour");
             }
 
             if(n.closing) {
                 if(n.interval_on)
-                    deleteNotification(name, i, "Cl_on");
+                    cancelNotificationAlarms(name, i, "Cl_on");
                 if(n.interval_15)
-                    deleteNotification(name, i, "Cl_15");
+                    cancelNotificationAlarms(name, i, "Cl_15");
                 if(n.interval_30)
-                    deleteNotification(name, i, "Cl_30");
+                    cancelNotificationAlarms(name, i, "Cl_30");
                 if(n.interval_hour)
-                    deleteNotification(name, i, "Cl_hour");
+                    cancelNotificationAlarms(name, i, "Cl_hour");
             }
         }
     }
 
-    private void deleteNotification(String name, int day, String type) {
+    private void cancelNotificationAlarms(String name, int day, String type) {
         int id = (name+type+day).hashCode(); // unique id for editing the Notification later
         Log.i("Delete hash for " + name + day + type, ""+id);
 
@@ -276,7 +262,7 @@ public class NotificationPresenter {
 
     // Returns the time in ms from epoch for the given time on the next Day
     // of the week relative to the given Calendar
-    public Long parseTimeStringToMs(String timeString, int day, Calendar alarmCalendar) {
+    private static Long parseTimeStringToMs(String timeString, int day, Calendar alarmCalendar) {
 
         // Determine if the time is in the past
         boolean hasPassed = timeHasPassed(timeString, day, alarmCalendar);
@@ -313,7 +299,7 @@ public class NotificationPresenter {
     }
 
     // Returns the active schedule given the current date
-    private RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
+    private static RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
         RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -338,7 +324,7 @@ public class NotificationPresenter {
     }
 
     // Determines if the given time is earlier in the current day
-    public boolean timeHasPassed(String time, int day, Calendar now) {
+    public static boolean timeHasPassed(String time, int day, Calendar now) {
         if(now.get(Calendar.DAY_OF_WEEK) != day)
             return false;
 

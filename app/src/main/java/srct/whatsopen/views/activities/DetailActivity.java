@@ -25,6 +25,7 @@ import butterknife.OnClick;
 import io.realm.Realm;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.model.NotificationSettings;
 import srct.whatsopen.views.FacilityView;
 import srct.whatsopen.presenters.FacilityPresenter;
 import srct.whatsopen.views.fragments.NotificationDialogFragment;
@@ -146,8 +147,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
         String statusText = mFacility.isOpen() ? "Open" : "Closed";
         openStatusTextView.setText(statusText);
 
-        openDurationTextView.setText(mPresenter.getStatusDuration(mFacility,
-                Calendar.getInstance()));
+        openDurationTextView.setText(mFacility.getStatusDuration());
 
         locationTextView.setText(mFacility.getLocation());
 
@@ -157,9 +157,10 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
 
     // Sets the notification button text to edit if a Notification exists
     private void setNotificationStatus() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        Set<String> notificationSettings = pref.getStringSet(mFacility.getName()
-                + "NotificationSettings", null);
+        Realm realm = Realm.getDefaultInstance();
+        NotificationSettings notificationSettings = realm.where(NotificationSettings.class)
+                .equalTo("name", mFacility.getName()).findFirst();
+        realm.close();
 
         if (notificationSettings != null) {
             inEditMode = true;

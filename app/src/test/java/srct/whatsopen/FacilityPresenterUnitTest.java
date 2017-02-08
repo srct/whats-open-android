@@ -38,51 +38,12 @@ public class FacilityPresenterUnitTest {
                 "2017-01-09", "2017-01-15");
 
         mFacility = new Facility("Chef's Table at Brooklyn Fare", "Whitetop Hall",
-                mainSchedule, new RealmList<>(), false, true);
+                mainSchedule, new RealmList<>(), false, true, "");
 
         now = Calendar.getInstance();
         now.set(2017, 0, 9, 13, 0); // Monday, 1/9/2017, 13:00:00
     }
 
-    @Test
-    public void testFacilityMessageOpensToday() {
-        // Set date
-        now.set(2017, 0, 9, 10, 0); // Monday, 1/9/2017, 10:00:00
-        String statusDuration = mPresenter.getStatusDuration(mFacility, now);
-
-        assertEquals("Opens today at 11:00 AM", statusDuration);
-    }
-
-    @Test
-    public void testFacilityMessageOpensNotToday() {
-        // Set date
-        now.set(2017, 0, 11, 10, 0); // Wednesday, 1/11/2017, 10:00:00
-        String statusDuration = mPresenter.getStatusDuration(mFacility, now);
-
-        assertEquals("Opens next on Monday at 11:00 AM", statusDuration);
-    }
-
-    @Test
-    public void testFacilityMessageCloses() {
-        // Set date
-        now.set(2017, 0, 9, 13, 0); // Monday, 1/9/2017, 13:00:00
-        mFacility.setOpen(true);
-        String statusDuration = mPresenter.getStatusDuration(mFacility, now);
-
-        assertEquals("Closes at 6:00 PM", statusDuration);
-    }
-
-    @Test
-    public void testFacilityMessageNoSchedule() {
-        // Set date
-        now.set(2017, 0, 9, 13, 0); // Monday, 1/9/2017, 13:00:00
-        mFacility.setMainSchedule(new MainSchedule(new RealmList<OpenTimes>(),
-                "2017-01-09", "2017-01-15"));
-
-        String statusDuration = mPresenter.getStatusDuration(mFacility, now);
-
-        assertEquals("No open time on schedule", statusDuration);
-    }
 
     @Test
     public void testFacilitySchedule() {
@@ -129,22 +90,6 @@ public class FacilityPresenterUnitTest {
     }
 
     @Test
-    public void testFacilityMessageNeverCloses() {
-        RealmList<OpenTimes> openTimesList = new RealmList<>();
-        openTimesList.add(new OpenTimes(0, 6, "00:00:00", "23:59:59"));
-        mFacility.setOpen(true);
-        mFacility.setMainSchedule(new MainSchedule(openTimesList,
-            "2017-01-09", "2017-01-15"));
-
-        // Set date
-        now.set(2017, 0, 11, 10, 0); // Wednesday, 1/11/2017, 10:00:00
-
-        String statusDuration = mPresenter.getStatusDuration(mFacility, now);
-
-        assertEquals("Open 24/7", statusDuration);
-    }
-
-    @Test
     public void testFacilityScheduleNeverCloses() {
         RealmList<OpenTimes> openTimesList = new RealmList<>();
         openTimesList.add(new OpenTimes(0, 6, "00:00:00", "23:59:59"));
@@ -155,22 +100,6 @@ public class FacilityPresenterUnitTest {
         String schedule = mPresenter.getSchedule(mFacility, now);
 
         assertEquals("This facility is always open", schedule);
-    }
-
-    @Test
-    public void testFacilityMessage_2() {
-        RealmList<OpenTimes> openTimesList = new RealmList<>();
-        openTimesList.add(new OpenTimes(5, 5, "08:00:00", "09:00:00"));
-        openTimesList.add(new OpenTimes(6, 6, "08:00:00", "09:00:00"));
-        mFacility.setMainSchedule(new MainSchedule(openTimesList,
-                "2017-01-09", "2017-01-15"));
-
-        // Set date
-        now.set(2017, 0, 11, 10, 0); // Wednesday, 1/11/2017, 10:00:00
-
-        String statusDuration = mPresenter.getStatusDuration(mFacility, now);
-
-        assertEquals("Opens next on Saturday at 8:00 AM", statusDuration);
     }
 
     @Test

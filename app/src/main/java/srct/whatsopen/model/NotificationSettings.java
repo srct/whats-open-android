@@ -1,12 +1,16 @@
 package srct.whatsopen.model;
 
 
-public class NotificationSettings {
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+public class NotificationSettings extends RealmObject {
 
     public NotificationSettings() {
     }
 
-    public NotificationSettings(boolean opening, boolean closing, boolean interval_on, boolean interval_15, boolean interval_30, boolean interval_hour) {
+    public NotificationSettings(String name, boolean opening, boolean closing, boolean interval_on, boolean interval_15, boolean interval_30, boolean interval_hour) {
+        this.name = name;
         this.opening = opening;
         this.closing = closing;
         this.interval_on = interval_on;
@@ -14,6 +18,9 @@ public class NotificationSettings {
         this.interval_30 = interval_30;
         this.interval_hour = interval_hour;
     }
+
+    @PrimaryKey
+    public String name;
 
     public boolean opening;
     public boolean closing;

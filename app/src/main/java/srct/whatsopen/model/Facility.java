@@ -10,13 +10,14 @@ public class Facility extends RealmObject {
 
     public Facility(String name, String location, MainSchedule mainSchedule,
                     RealmList<SpecialSchedule> specialSchedules, boolean isOpen,
-                    boolean isFavorited) {
+                    boolean isFavorited, String statusDuration) {
         mName = name;
         mLocation = location;
         mMainSchedule = mainSchedule;
         mSpecialSchedules = specialSchedules;
         this.isOpen = isOpen;
         this.isFavorited = isFavorited;
+        this.statusDuration = statusDuration;
     }
 
     public Facility() {
@@ -37,6 +38,15 @@ public class Facility extends RealmObject {
 
     private boolean isOpen;
     private boolean isFavorited;
+    private String statusDuration;
+
+    public String getStatusDuration() {
+        return statusDuration;
+    }
+
+    public void setStatusDuration(String statusDuration) {
+        this.statusDuration = statusDuration;
+    }
 
     public RealmList<SpecialSchedule> getSpecialSchedules() {
         return mSpecialSchedules;

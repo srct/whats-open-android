@@ -81,6 +81,11 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
 
+        // Changes the Notification button text in DetailActivity
+        NotificationDialogListener listener = (NotificationDialogListener) getActivity();
+        if(listener != null) {
+            listener.onSetNotification();
+        }
     }
 
     @Nullable
@@ -107,15 +112,11 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
 
     @OnClick(R.id.save_button)
     public void onSave() {
-        mPresenter.saveNotifications(mName, inEditMode, new NotificationSettings(
+        mPresenter.saveNotifications(inEditMode, new NotificationSettings(mName,
                 typeOpeningCheckBox.isChecked(), typeClosingCheckBox.isChecked(),
                 intervalOnCheckBox.isChecked(), interval15CheckBox.isChecked(),
                 interval30CheckBox.isChecked(), intervalHourCheckBox.isChecked()
         ));
-
-        // Changes the Notification button text in DetailActivity
-        NotificationDialogListener listener = (NotificationDialogListener) getActivity();
-        listener.onSetNotification();
     }
 
     @OnClick(R.id.cancel_button)
@@ -127,10 +128,6 @@ public class NotificationDialogFragment extends DialogFragment implements Notifi
     @OnClick(R.id.remove_button)
     public void onRemove() {
         mPresenter.removeNotifications(mName, true);
-
-        // Changes the Notification button text in DetailActivity
-        NotificationDialogListener listener = (NotificationDialogListener) getActivity();
-        listener.onSetNotification();
     }
 
     @Override
