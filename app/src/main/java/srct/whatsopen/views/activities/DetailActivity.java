@@ -1,6 +1,7 @@
 package srct.whatsopen.views.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -89,13 +90,11 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
             case R.id.action_favorite:
                 mPresenter.toggleFavorite(mFacility);
                 return true;
             case R.id.action_settings:
+                expandSettingsActivity();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -175,5 +174,11 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     @Override
     public void onSetNotification() {
         setNotificationStatus();
+    }
+
+    // Opens the About page for the app
+    private void expandSettingsActivity() {
+        Intent i = new Intent(this, SettingsActivity.class);
+        startActivity(i);
     }
 }
