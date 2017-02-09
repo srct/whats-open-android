@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent" android:layout_width="match_parent">
+
+    <PreferenceCategory
+        android:title="@string/title_list_view">
+
+        <ListPreference
+            android:key="list_view_information_preference"
+            android:title="@string/title_list_view_information"
+            android:entries="@array/entries_list_view_information_preference"
+            android:entryValues="@array/entryvalues_list_view_information_preference" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_rotation">
+
+        <CheckBoxPreference
+            android:key="turn_off_rotation_preference"
+            android:title="@string/title_turn_off_rotation" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_notification">
+
+        <CheckBoxPreference
+            android:key="turn_off_vibrations_preference"
+            android:title="@string/title_turn_off_vibrations" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -11,6 +11,7 @@ import com.danielstone.materialaboutlibrary.model.MaterialAboutCard;
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList;
 import com.danielstone.materialaboutlibrary.model.MaterialAboutTitleItem;
 
+import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 
 public class AboutActivity extends MaterialAboutActivity {
@@ -18,6 +19,12 @@ public class AboutActivity extends MaterialAboutActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.setRotation(this);
     }
 
     @Override
