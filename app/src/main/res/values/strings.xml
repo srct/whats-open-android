@@ -5,11 +5,11 @@
     <string name="remove_all_text">Remove All</string>
 
     <!-- Strings for PreferenceFragment -->
-    <string name="title_list_view">List View Preferences</string>
+    <string name="title_list_view">List View</string>
     <string name="title_list_view_information">Duration display</string>
-    <string name="title_rotation">Rotation Preferences</string>
+    <string name="title_rotation">Rotation</string>
     <string name="title_turn_off_rotation">Turn off rotation</string>
-    <string name="title_notification">Notification Preferences</string>
+    <string name="title_notification">Notifications</string>
     <string name="title_turn_off_vibrations">Turn off vibrations</string>
     <string-array name="entries_list_view_information_preference">
         <item>Both</item>

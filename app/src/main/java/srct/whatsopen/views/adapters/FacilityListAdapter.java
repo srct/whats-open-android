@@ -66,18 +66,9 @@ public class FacilityListAdapter extends
             // set the RV cell to be highlighted
             holder.itemView.setBackgroundColor(ContextCompat
                     .getColor(context, R.color.facilityOpen));
-
-            // show the duration that the facility will be open
-            // setItemPaddingInDp(holder.textLayout, 8);
-            holder.durationTextView.setVisibility(View.VISIBLE);
-            //holder.nameTextView.setTypeface(null, Typeface.BOLD);
         } else {
             holder.itemView.setBackgroundColor(ContextCompat
                     .getColor(context, R.color.facilityClosed));
-
-            // setItemPaddingInDp(holder.textLayout, 15);
-            holder.durationTextView.setVisibility(View.GONE);
-            //holder.nameTextView.setTypeface(null, Typeface.NORMAL);
         }
 
         if (facility.isFavorited()) {
@@ -120,11 +111,9 @@ public class FacilityListAdapter extends
             // display the duration text
             setItemPaddingInDp(holder.textLayout, 8);
             holder.durationTextView.setVisibility(View.VISIBLE);
-            holder.nameTextView.setTypeface(null, Typeface.BOLD);
         } else {
             setItemPaddingInDp(holder.textLayout, 15);
             holder.durationTextView.setVisibility(View.GONE);
-            holder.nameTextView.setTypeface(null, Typeface.NORMAL);
         }
     }
 
