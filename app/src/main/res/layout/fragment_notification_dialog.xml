@@ -114,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/save_button"
                 android:layout_toStartOf="@+id/save_button"
-                android:text="Remove"
+                android:text="@string/remove_all_text"
                 android:textColor="@color/colorPrimary"
                 android:visibility="gone" />
 

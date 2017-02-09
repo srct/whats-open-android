@@ -33,6 +33,7 @@ public class AboutActivity extends MaterialAboutActivity {
 
         appCardBuilder.addItem(new MaterialAboutTitleItem.Builder()
                 .text("What's Open")
+                .icon(R.drawable.ic_wo_icon)
                 .build());
         appCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("Version")
@@ -45,7 +46,7 @@ public class AboutActivity extends MaterialAboutActivity {
         contributorsCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("Version 1.0")
                 .icon(R.drawable.ic_people_black_24dp)
-                .subText("Robert Hitt, Tanner Grehawick")
+                .subText("Robert Hitt, Tanner Grehawick, Jason Yeomans")
                 .build());
 
         MaterialAboutCard.Builder aboutCardBuilder = new MaterialAboutCard.Builder();
