@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-<LinearLayout android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="1dp"
-        android:layout_margin="6dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="vertical"
-            android:padding="8dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <TextView
-                android:text="Notification Type"
-                android:paddingStart="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="2dp"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
+                android:paddingStart="2dp"
                 android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:text="Notification Type" />
 
             <View
                 android:layout_width="fill_parent"
@@ -37,41 +32,33 @@
 
             <CheckBox
                 android:id="@+id/type_opening_check"
-                android:text="Opening"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="Opening" />
 
             <CheckBox
                 android:id="@+id/type_closing_check"
-                android:text="Closing"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="Closing" />
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="1dp"
-        android:layout_margin="6dp">
-
         <LinearLayout
-            android:orientation="vertical"
-            android:padding="8dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <TextView
-                android:text="Notification Interval"
-                android:paddingStart="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="2dp"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
+                android:paddingStart="2dp"
                 android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:text="Notification Interval" />
 
             <View
                 android:layout_width="fill_parent"
@@ -80,69 +67,68 @@
 
             <CheckBox
                 android:id="@+id/interval_on_check"
-                android:text="On opening/closing"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="On opening/closing" />
 
             <CheckBox
                 android:id="@+id/interval_15_check"
-                android:text="15 minutes before"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="15 minutes before" />
 
             <CheckBox
                 android:id="@+id/interval_30_check"
-                android:text="30 minutes before"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="30 minutes before" />
 
             <CheckBox
                 android:id="@+id/interval_hour_check"
-                android:text="An hour before"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="An hour before" />
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
 
-    <RelativeLayout
-        android:padding="4dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
 
-        <Button
-            android:id="@+id/save_button"
-            android:text="Save"
-            android:textColor="@color/colorPrimary"
-            style="?android:borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/cancel_button"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/remove_button"
+                android:layout_toStartOf="@+id/remove_button"
+                android:text="Cancel"
+                android:textColor="@color/colorPrimary" />
 
-        <Button
-            android:id="@+id/cancel_button"
-            android:text="Cancel"
-            android:textColor="@color/colorPrimary"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            style="?android:borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/remove_button"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/save_button"
+                android:layout_toStartOf="@+id/save_button"
+                android:text="Remove"
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone" />
 
-        <Button
-            android:id="@+id/remove_button"
-            android:text="Remove All"
-            android:textColor="@color/colorPrimary"
-            android:layout_toRightOf="@id/save_button"
-            android:layout_toEndOf="@id/save_button"
-            android:layout_toStartOf="@id/cancel_button"
-            android:layout_toLeftOf="@id/cancel_button"
-            android:visibility="gone"
-            style="?android:borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/save_button"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="Save"
+                android:textColor="@color/colorPrimary" />
 
-    </RelativeLayout>
+        </RelativeLayout>
 
-</LinearLayout>
+    </LinearLayout>
 </ScrollView>
