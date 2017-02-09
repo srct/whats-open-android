@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
         // Configure toolbar
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setLogo(R.drawable.wo_clock_toolbar);
 
         setUpTabStrip();
     }
