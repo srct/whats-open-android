@@ -190,6 +190,14 @@ public class NotificationPresenter {
     private static void setAlarm(Context context, String name, int day, String type,
                                  int intervalMin, String time, String message) {
 
+        // NOTE: this doesn't set notifications based on the assumption that
+        // facilities shouldn't open or close at those times, thus those must indicate
+        // that the facility is open 24/7 or open past midnight
+        // As of writing this (2/9/17) there is no better way (due to the way the Api is written)
+        // If you're reading this and there now is an approach, please fix this
+        if(time.equals("00:00:00") || time.equals("23:59:59"))
+            return;
+
         Long alarmTime = parseTimeStringToMs(time, day, Calendar.getInstance());
 
         int interval = intervalMin * 60000; // parse minutes to ms
