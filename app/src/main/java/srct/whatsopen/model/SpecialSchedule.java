@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
-public class SpecialSchedule extends RealmObject {
+public class SpecialSchedule extends RealmObject implements Schedule {
 
     public SpecialSchedule(RealmList<OpenTimes> openTimesList, String validStart, String validEnd) {
         mOpenTimesList = openTimesList;

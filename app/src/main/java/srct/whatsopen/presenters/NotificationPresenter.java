@@ -19,10 +19,12 @@ import java.util.Set;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.NotificationSettings;
 import srct.whatsopen.model.OpenTimes;
+import srct.whatsopen.model.Schedule;
 import srct.whatsopen.model.SpecialSchedule;
 import srct.whatsopen.util.NotificationReceiver;
 import srct.whatsopen.views.NotificationView;
@@ -135,7 +137,13 @@ public class NotificationPresenter {
         Realm realm = Realm.getDefaultInstance();
         Facility facility = realm.where(Facility.class)
                 .equalTo("mName", notificationSettings.name).findFirst();
-        RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, Calendar.getInstance());
+        Schedule schedule = getActiveSchedule(facility, Calendar.getInstance());
+
+        if(!schedule.equals(facility.getMainSchedule())) {
+            setNotificationForScheduleEnd(context, schedule, facility.getName());
+        }
+
+        RealmList<OpenTimes> openTimesList = schedule.getOpenTimesList();
 
         if(openTimesList == null || openTimesList.size() == 0)
             return;
@@ -220,6 +228,30 @@ public class NotificationPresenter {
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 7*1440*60000, pendingIntent);
     }
 
+    private static void setNotificationForScheduleEnd(Context context, Schedule schedule,
+                                                      String name) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        int id = (name+"schedule_end").hashCode(); // unique id for editing the Notification later
+
+        try {
+            long endTime = sdf.parse(schedule.getValidEnd()).getTime();
+
+            String titleMessage = String.format("%s's schedule just changed!", name);
+
+            Intent intent = new Intent(context, NotificationReceiver.class);
+            intent.putExtra("title", titleMessage);
+            intent.putExtra("text", "You may want to reset your notifications.");
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            alarm.set(AlarmManager.RTC_WAKEUP, endTime, pendingIntent);
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+    }
+
     private void deleteNotificationsForFacility(String name) {
         Realm realm = Realm.getDefaultInstance();
         NotificationSettings n = realm.where(NotificationSettings.class).equalTo("name", name)
@@ -232,32 +264,38 @@ public class NotificationPresenter {
         for(int i = 1; i <= 7; i++) {
             if(n.opening) {
                 if(n.interval_on)
-                    cancelNotificationAlarms(name, i, "Op_on");
+                    cancelNotificationAlarms((name+"Op_on"+i).hashCode());
                 if(n.interval_15)
-                    cancelNotificationAlarms(name, i, "Op_15");
+                    cancelNotificationAlarms((name+"Op_15"+i).hashCode());
+                    //cancelNotificationAlarms(name, i, "Op_15");
                 if(n.interval_30)
-                    cancelNotificationAlarms(name, i, "Op_30");
+                    cancelNotificationAlarms((name+"Op_30"+i).hashCode());
+                    //cancelNotificationAlarms(name, i, "Op_30");
                 if(n.interval_hour)
-                    cancelNotificationAlarms(name, i, "Op_hour");
+                    cancelNotificationAlarms((name+"Op_hour"+i).hashCode());
+                    //cancelNotificationAlarms(name, i, "Op_hour");
             }
 
             if(n.closing) {
                 if(n.interval_on)
-                    cancelNotificationAlarms(name, i, "Cl_on");
+                    cancelNotificationAlarms((name+"Cl_on"+i).hashCode());
+                    //cancelNotificationAlarms(name, i, "Cl_on");
                 if(n.interval_15)
-                    cancelNotificationAlarms(name, i, "Cl_15");
+                    cancelNotificationAlarms((name+"Cl_15"+i).hashCode());
+                    //cancelNotificationAlarms(name, i, "Cl_15");
                 if(n.interval_30)
-                    cancelNotificationAlarms(name, i, "Cl_30");
+                    cancelNotificationAlarms((name+"Cl_30"+i).hashCode());
+                    //cancelNotificationAlarms(name, i, "Cl_30");
                 if(n.interval_hour)
-                    cancelNotificationAlarms(name, i, "Cl_hour");
+                    cancelNotificationAlarms((name+"Cl_hour"+i).hashCode());
+                    //cancelNotificationAlarms(name, i, "Cl_hour");
             }
+
+            cancelNotificationAlarms((name+"schedule_end").hashCode());
         }
     }
 
-    private void cancelNotificationAlarms(String name, int day, String type) {
-        int id = (name+type+day).hashCode(); // unique id for editing the Notification later
-        Log.i("Delete hash for " + name + day + type, ""+id);
-
+    private void cancelNotificationAlarms(int id) {
         // Get the Intent matching the existing id
         Intent intent = new Intent(mNotificationView.getContext(), NotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(mNotificationView.getContext(),
@@ -307,9 +345,7 @@ public class NotificationPresenter {
     }
 
     // Returns the active schedule given the current date
-    private static RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
-        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
-
+    private static Schedule getActiveSchedule(Facility facility, Calendar now) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date currentDate = now.getTime();
@@ -319,8 +355,7 @@ public class NotificationPresenter {
                 Date endDate = sdf.parse(s.getValidEnd());
 
                 if(currentDate.compareTo(startDate) >= 0 && currentDate.compareTo(endDate) <= 0) {
-                    openTimesList = s.getOpenTimesList();
-                    return openTimesList;
+                    return s;
                 }
             }
         } catch (ParseException pe) {
@@ -328,7 +363,7 @@ public class NotificationPresenter {
             return null;
         }
 
-        return openTimesList;
+        return facility.getMainSchedule();
     }
 
     // Determines if the given time is earlier in the current day
