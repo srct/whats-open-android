@@ -1,12 +1,15 @@
 package srct.whatsopen.views.activities;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +24,9 @@ import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 import srct.whatsopen.presenters.MainPresenter;
 import srct.whatsopen.views.MainView;
+import srct.whatsopen.views.adapters.FacilityListAdapter;
 import srct.whatsopen.views.adapters.FacilityListFragmentPagerAdapter;
+import srct.whatsopen.views.fragments.FacilityListFragment;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -71,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        configureSearchView(menu);
+
         return true;
     }
 
@@ -119,6 +127,40 @@ public class MainActivity extends AppCompatActivity implements MainView {
             case "default_tab_closed":
                 return 3;
         }
+    }
+
+    private void configureSearchView(Menu menu) {
+        // I think this is for doing the search asynchronously
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        // Set QueryTextListener
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // kinda hacky way to get the Fragment through the multitudinous layers of
+                // ViewPager spaghetti. I mean, not that hacky, but it looks gross
+                Fragment fragment = getSupportFragmentManager()
+                        .findFragmentByTag("android:switcher:" + R.id.view_pager + ":" +
+                        mViewPager.getCurrentItem());
+
+                if(fragment != null) {
+                    FacilityListAdapter adapter = (FacilityListAdapter)
+                            ((FacilityListFragment) fragment).getRecyclerView().getAdapter();
+
+                    adapter.getFilter().filter(newText);
+                }
+
+                return true;
+            }
+        });
     }
 
     @Override

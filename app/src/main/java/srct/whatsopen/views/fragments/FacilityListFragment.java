@@ -140,6 +140,10 @@ public class FacilityListFragment extends android.support.v4.app.Fragment implem
         return getActivity();
     }
 
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
     // Redraws RecyclerView if the settings have changed for it
     private void setPreferenceChangeListener() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
