@@ -7,6 +7,7 @@
     <!-- Strings for PreferenceFragment -->
     <string name="title_list_view">List View</string>
     <string name="title_list_view_information">Duration display</string>
+    <string name="title_list_view_default_tab">Default tab</string>
     <string name="title_rotation">Rotation</string>
     <string name="title_turn_off_rotation">Turn off rotation</string>
     <string name="title_notification">Notifications</string>
@@ -22,6 +23,18 @@
         <item>display_duration_open</item>
         <item>display_duration_closed</item>
         <item>display_duration_none</item>
+    </string-array>
+    <string-array name="entries_list_view_default_tab_preference">
+        <item>All</item>
+        <item>Favorites</item>
+        <item>Open</item>
+        <item>Closed</item>
+    </string-array>
+    <string-array name="entryvalues_list_view_default_tab_preference">
+        <item>default_tab_all</item>
+        <item>default_tab_favorites</item>
+        <item>default_tab_open</item>
+        <item>default_tab_closed</item>
     </string-array>
 
 </resources>

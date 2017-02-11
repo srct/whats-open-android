@@ -2,9 +2,11 @@ package srct.whatsopen.views.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -99,7 +101,24 @@ public class MainActivity extends AppCompatActivity implements MainView {
         tabStrip.setViewPager(mViewPager);
 
         // Set the default tab to 'All'
-        mViewPager.setCurrentItem(1);
+        int tabNumber = getDefaultTabNumber();
+        mViewPager.setCurrentItem(tabNumber);
+    }
+
+    private int getDefaultTabNumber() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String tabName = pref.getString("list_view_default_tab_preference", "default_tab_all");
+
+        switch(tabName) {
+            case "default_tab_favorites":
+                return 0;
+            case "default_tab_all":default:
+                return 1;
+            case "default_tab_open":
+                return 2;
+            case "default_tab_closed":
+                return 3;
+        }
     }
 
     @Override
