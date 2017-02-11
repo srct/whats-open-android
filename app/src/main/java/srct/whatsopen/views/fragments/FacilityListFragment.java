@@ -88,33 +88,33 @@ public class FacilityListFragment extends android.support.v4.app.Fragment implem
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         switch(mMode) {
-            case "All":
+            case "All":default:
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
-                              .findAllSortedAsync("isOpen", Sort.DESCENDING)));
+                              .findAllSortedAsync("isOpen", Sort.DESCENDING),
+                        mMode, mRealm));
                 break;
             case "Favorites":
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
                               .equalTo("isFavorited", true)
-                              .findAllSortedAsync("isOpen", Sort.DESCENDING)));
+                              .findAllSortedAsync("isOpen", Sort.DESCENDING),
+                        mMode, mRealm));
                 break;
             case "Open":
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
                               .equalTo("isOpen", true)
-                              .findAllSortedAsync("isOpen", Sort.DESCENDING)));
+                              .findAllSortedAsync("isOpen", Sort.DESCENDING),
+                        mMode, mRealm));
                 break;
             case "Closed":
                 mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
                         mRealm.where(Facility.class)
                               .equalTo("isOpen", false)
-                              .findAllSortedAsync("isOpen", Sort.DESCENDING)));
+                              .findAllSortedAsync("isOpen", Sort.DESCENDING),
+                        mMode, mRealm));
                 break;
-            default:
-                mRecyclerView.setAdapter(new FacilityListAdapter(view.getContext(),
-                        mRealm.where(Facility.class)
-                              .findAllSortedAsync("isOpen", Sort.DESCENDING)));
         }
 
         // Speeds things up for static lists

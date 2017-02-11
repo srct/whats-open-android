@@ -21,32 +21,40 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import butterknife.OnClick;
+import io.realm.Case;
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.views.FacilityView;
 import srct.whatsopen.views.activities.DetailActivity;
 import srct.whatsopen.presenters.FacilityPresenter;
 
-/**
- * Basic RecyclerView boilerplate, with some added Realm stuff
- */
 
 public class FacilityListAdapter extends
         RealmRecyclerViewAdapter<Facility, FacilityListAdapter.ViewHolder> implements
         Filterable {
 
+    private String mMode;
+    private Realm mRealm;
+
+    // Mode describes the filtering for the elements to be displayed
     public FacilityListAdapter(Context context,
-                               OrderedRealmCollection<Facility> data) {
+                               OrderedRealmCollection<Facility> data, String mode, Realm realm) {
 
         super(context, data, true);
+
+        mMode = mode;
+        mRealm = realm;
     }
 
     @Override
@@ -136,41 +144,48 @@ public class FacilityListAdapter extends
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                /*
-                FilterResults results = new FilterResults();
-
-                // if there's no text in the search i.e. user hasn't typed anything yet
-                if(constraint == null || constraint.length() == 0) {
-                    results.values = getData();
-                    results.count = getData() != null ? getData().size() : 0;
-                }
-                else if(getData() != null) {
-                    ArrayList<Facility> filteredFacilities = new ArrayList<>();
-
-                    for(Facility f : getData()) {
-                        // search for Facilities which match the search text
-                        if(f.getName().toUpperCase().contains(constraint.toString().toUpperCase())){
-                            filteredFacilities.add(f);
-                        }
-
-                        results.values = filteredFacilities;
-                        results.count = filteredFacilities.size();
-                    }
-                }
-                */
-
                 return new FilterResults();
             }
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults filterResults) {
+                resetData();
+
                 if(constraint != null && getData() != null) {
                     RealmResults<Facility> results = getData().where()
-                            .contains("mName", constraint.toString()).findAll();
+                            .contains("mName", constraint.toString(), Case.INSENSITIVE)
+                            .findAll();
                     updateData(results);
                 }
             }
         };
+    }
+
+    // Reloads the data between searches
+    private void resetData() {
+        RealmResults<Facility> results;
+        switch(mMode) {
+            case "All":default:
+                results = mRealm.where(Facility.class)
+                        .findAllSorted("isOpen", Sort.DESCENDING);
+                break;
+            case "Favorites":
+                results = mRealm.where(Facility.class)
+                        .equalTo("isFavorited", true)
+                        .findAllSorted("isOpen", Sort.DESCENDING);
+                break;
+            case "Open":
+                results = mRealm.where(Facility.class)
+                        .equalTo("isOpen", true)
+                        .findAllSorted("isOpen", Sort.DESCENDING);
+                break;
+            case "Closed":
+                results = mRealm.where(Facility.class)
+                        .equalTo("isOpen", false)
+                        .findAllSorted("isOpen", Sort.DESCENDING);
+                break;
+        }
+        updateData(results);
     }
 
     // Set up for the Recycler View cells
