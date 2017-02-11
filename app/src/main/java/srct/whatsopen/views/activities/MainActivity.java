@@ -133,7 +133,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
         // I think this is for doing the search asynchronously
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         // Set QueryTextListener
@@ -145,8 +146,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // kinda hacky way to get the Fragment through the multitudinous layers of
-                // ViewPager spaghetti. I mean, not that hacky, but it looks gross
+                // hacky way of getting the Fragment. Blame Android, not me
                 Fragment fragment = getSupportFragmentManager()
                         .findFragmentByTag("android:switcher:" + R.id.view_pager + ":" +
                         mViewPager.getCurrentItem());
@@ -159,6 +159,17 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 }
 
                 return true;
+            }
+        });
+
+        // Set QueryTextFocusChangeListener
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean queryTextFocused) {
+                if(!queryTextFocused) {
+                    searchItem.collapseActionView();
+                    searchView.setQuery("", false);
+                }
             }
         });
     }

@@ -2,6 +2,11 @@
     <string name="app_name">What\'s Open</string>
     <string name="toast_set_favorite">Added %s to Favorites</string>
     <string name="toast_unset_favorite">Removed %s from Favorites</string>
+
+    <!-- Strings for MainActivity -->
+    <string name="search_hint">Search&#8230;</string>
+
+    <!-- Strings for NotificationDialog -->
     <string name="remove_all_text">Remove All</string>
 
     <!-- Strings for PreferenceFragment -->
