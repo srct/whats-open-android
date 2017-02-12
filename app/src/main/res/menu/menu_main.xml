@@ -5,22 +5,28 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white_24dp"
-        app:showAsAction="collapseActionView|ifRoom"
+        app:showAsAction="collapseActionView|always"
         app:actionViewClass="android.support.v7.widget.SearchView"
         android:title="Search"/>
 
-    <item
-        android:id="@+id/action_refresh"
-        android:icon="@drawable/ic_refresh_white_24dp"
-        android:title="Refresh"/>
+    <group
+        android:id="@+id/menu_main_group">
 
-    <item
-        android:id="@+id/action_settings"
-        app:showAsAction="never"
-        android:title="Settings"/>
+        <item
+            android:id="@+id/action_refresh"
+            android:icon="@drawable/ic_refresh_white_24dp"
+            android:title="Refresh"/>
 
-    <item
-        android:id="@+id/action_about"
-        app:showAsAction="never"
-        android:title="About"/>
+        <item
+            android:id="@+id/action_settings"
+            app:showAsAction="never"
+            android:title="Settings"/>
+
+        <item
+            android:id="@+id/action_about"
+            app:showAsAction="never"
+            android:title="About"/>
+
+    </group>
+
 </menu>

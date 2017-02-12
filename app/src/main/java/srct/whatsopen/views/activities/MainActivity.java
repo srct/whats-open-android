@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     ViewPager mViewPager;
 
     private MainPresenter mPresenter;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +78,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mMenu = menu;
 
-        configureSearchView(menu);
+        configureSearchView();
 
         return true;
     }
@@ -129,15 +132,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
         }
     }
 
-    private void configureSearchView(Menu menu) {
+    private void configureSearchView() {
         // I think this is for doing the search asynchronously
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
-        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final MenuItem searchItem = mMenu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        // Set QueryTextListener
+        // Set Listener to filter data when queries are entered in SearchView
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -162,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
             }
         });
 
-        // Set QueryTextFocusChangeListener
+        // Reset list view when Search is closed
         searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean queryTextFocused) {
