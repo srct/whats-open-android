@@ -56,6 +56,22 @@ public class MainPresenterUnitTest {
     }
 
     @Test
+    public void testFacilityIsOpenPastMidnight() {
+        // Set date
+        now.set(2017, 0, 12, 1, 0); // Thursday, 1/12/2017, 02:00:00
+
+        // Add more open times
+        OpenTimes o3 = new OpenTimes(2, 2, "13:00:00", "23:59:59"); // Wednesday 13:00-midnight
+        OpenTimes o4 = new OpenTimes(3, 3, "13:00:00", "23:59:59"); // Thursday 13:00-midnight
+        OpenTimes o5 = new OpenTimes(3, 3, "00:00:00", "02:00:00"); // Thursday 00:00-02:00
+        mFacility.getMainSchedule().getOpenTimesList().add(o3);
+        mFacility.getMainSchedule().getOpenTimesList().add(o4);
+        mFacility.getMainSchedule().getOpenTimesList().add(o5);
+
+        assertTrue(mPresenter.getOpenStatus(mFacility, now));
+    }
+
+    @Test
     public void testFacilityIsClosed() {
         // Set date
         now.set(2017, 1, 10, 12, 0); // Tuesday, 2/10/2017, 12:00:00
@@ -97,6 +113,25 @@ public class MainPresenterUnitTest {
         String statusDuration = mPresenter.getStatusDuration(mFacility, now);
 
         assertEquals("Closes at 6:00 PM", statusDuration);
+    }
+
+    @Test
+    public void testFacilityMessageClosesPastMidnight() {
+        // Set date
+        now.set(2017, 0, 12, 14, 0); // Thursday, 1/12/2017, 14:00:00
+        mFacility.setOpen(true);
+
+        // Add more open times
+        OpenTimes o3 = new OpenTimes(2, 2, "13:00:00", "23:59:59"); // Wednesday 13:00-midnight
+        OpenTimes o4 = new OpenTimes(3, 3, "13:00:00", "23:59:59"); // Thursday 13:00-midnight
+        OpenTimes o5 = new OpenTimes(3, 3, "00:00:00", "02:00:00"); // Thursday 00:00-02:00
+        mFacility.getMainSchedule().getOpenTimesList().add(o3);
+        mFacility.getMainSchedule().getOpenTimesList().add(o4);
+        mFacility.getMainSchedule().getOpenTimesList().add(o5);
+
+        String statusDuration = mPresenter.getStatusDuration(mFacility, now);
+
+        assertEquals("Closes at 2:00 AM", statusDuration);
     }
 
     @Test

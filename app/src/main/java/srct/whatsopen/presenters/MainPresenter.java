@@ -206,6 +206,11 @@ public class MainPresenter {
                 return "Open 24/7";
             }
 
+            if(getCurrentEndTime(openTimesList, currentDay).equals("23:59:59") &&
+                    getCurrentStartTime(openTimesList, (currentDay+1)%7).equals("00:00:00")) {
+                currentDay++;
+            }
+
             String closingTime = getCurrentEndTime(openTimesList, currentDay);
             closingTime = FacilityPresenter.parseTo12HourTime(closingTime);
             durationMessage = "Closes at " + closingTime;
