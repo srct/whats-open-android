@@ -1,13 +1,17 @@
 package srct.whatsopen.views.adapters;
 
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,15 +50,18 @@ public class FacilityListAdapter extends
 
     private String mMode;
     private Realm mRealm;
+    private Activity mActivity; // this is pretty much just for transition animations
 
     // Mode describes the filtering for the elements to be displayed
     public FacilityListAdapter(Context context,
-                               OrderedRealmCollection<Facility> data, String mode, Realm realm) {
+                               OrderedRealmCollection<Facility> data,
+                               String mode, Realm realm, Activity activity) {
 
         super(context, data, true);
 
         mMode = mode;
         mRealm = realm;
+        mActivity = activity;
     }
 
     @Override
@@ -226,7 +233,12 @@ public class FacilityListAdapter extends
             Intent intent = new Intent(context, DetailActivity.class);
             intent.putExtra("name", data.getName());
 
-            context.startActivity(intent);
+            // for some reason I need this for the transition to work
+            Pair<View, String> p1 = Pair.create((View) nameTextView, "");
+            ActivityOptionsCompat transitionActivityOptions =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, p1);
+
+            context.startActivity(intent, transitionActivityOptions.toBundle());
         }
 
         // toggles favorite status

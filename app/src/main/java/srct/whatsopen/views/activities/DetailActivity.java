@@ -3,6 +3,7 @@ package srct.whatsopen.views.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,8 +13,11 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -57,6 +61,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        setUpAnimations();
 
         getFacility(getIntent().getStringExtra("name"));
 
@@ -70,6 +75,15 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
         fillTextViews();
 
         setNotificationStatus();
+    }
+
+    private void setUpAnimations() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Slide slide = new Slide();
+            slide.setSlideEdge(Gravity.LEFT);
+            slide.setDuration(300);
+            getWindow().setEnterTransition(slide);
+        }
     }
 
     @Override
@@ -97,6 +111,13 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    finishAfterTransition();
+                } else {
+                    finish();
+                }
+                return true;
             case R.id.action_favorite:
                 mPresenter.toggleFavorite(mFacility);
                 return true;
@@ -143,9 +164,26 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
 
         getSupportActionBar().setTitle(mFacility.getName());
 
+        // Set shared content name for transitions if Api >= 21
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getTextViewTitle(toolbar).setTransitionName("facility_name");
+        }
+
         // Display back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    public static TextView getTextViewTitle(Toolbar toolbar){
+        TextView textViewTitle = null;
+        for(int i = 0; i<toolbar.getChildCount(); i++) {
+            View view = toolbar.getChildAt(i);
+            if(view instanceof TextView) {
+                textViewTitle = (TextView) view;
+                break;
+            }
+        }
+        return textViewTitle;
     }
 
     // Display the content to the text views
