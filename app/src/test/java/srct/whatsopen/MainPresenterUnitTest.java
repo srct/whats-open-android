@@ -58,7 +58,7 @@ public class MainPresenterUnitTest {
     @Test
     public void testFacilityIsOpenPastMidnight() {
         // Set date
-        now.set(2017, 0, 12, 1, 0); // Thursday, 1/12/2017, 02:00:00
+        now.set(2017, 0, 12, 1, 0); // Thursday, 1/12/2017, 01:00:00
 
         // Add more open times
         OpenTimes o3 = new OpenTimes(2, 2, "13:00:00", "23:59:59"); // Wednesday 13:00-midnight
@@ -67,6 +67,32 @@ public class MainPresenterUnitTest {
         mFacility.getMainSchedule().getOpenTimesList().add(o3);
         mFacility.getMainSchedule().getOpenTimesList().add(o4);
         mFacility.getMainSchedule().getOpenTimesList().add(o5);
+
+        assertTrue(mPresenter.getOpenStatus(mFacility, now));
+    }
+
+    // this tests a different way of representing that a Facility is open past Midnight.
+    // No, I don't know why there are multiple ways of representing that.
+    @Test
+    public void testFacilityIsOpenPastMidnight_2() {
+        // Set date
+        now.set(2017, 0, 12, 1, 0); // Thursday, 1/12/2017, 01:00:00
+
+        // Add more open times
+        OpenTimes o3 = new OpenTimes(2, 3, "13:00:00", "02:00:00"); // Wednesday 13:00-Thursday 2:00
+        mFacility.getMainSchedule().getOpenTimesList().add(o3);
+
+        assertTrue(mPresenter.getOpenStatus(mFacility, now));
+    }
+
+    @Test
+    public void testFacilityIsOpenPastMidnight_3() {
+        // Set date
+        now.set(2017, 0, 11, 14, 0); // Wednesday, 1/11/2017, 14:00:00
+
+        // Add more open times
+        OpenTimes o3 = new OpenTimes(2, 3, "13:00:00", "02:00:00"); // Wednesday 13:00-Thursday 2:00
+        mFacility.getMainSchedule().getOpenTimesList().add(o3);
 
         assertTrue(mPresenter.getOpenStatus(mFacility, now));
     }

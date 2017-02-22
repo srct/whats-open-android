@@ -158,25 +158,58 @@ public class MainPresenter {
         OpenTimes currentOpenTimes = null;
 
         for(OpenTimes o : openTimesList) {
-            if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay) {
+            if (o.getStartDay() == currentDay && o.getEndDay() == currentDay) {
                 currentOpenTimes = o;
 
                 // for some reason in the Api this signifies a facility that's open 24/7, sometimes
                 // praying for that api v2
-                if(currentOpenTimes.getStartTime().equals("00:00:00")
+                if (currentOpenTimes.getStartTime().equals("00:00:00")
                         && currentOpenTimes.getEndTime().equals("00:00:00")) {
                     return true;
                 }
 
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-
                 try {
                     Date startTime = sdf.parse(currentOpenTimes.getStartTime());
                     Date endTime = sdf.parse(currentOpenTimes.getEndTime());
                     // have to parse it from date to string to date. how fun
                     Date currentTime = sdf.parse(sdf.format(now.getTime()));
 
-                    if(currentTime.compareTo(startTime) > 0 && currentTime.compareTo(endTime) < 0)
+                    if (currentTime.compareTo(startTime) > 0 && currentTime.compareTo(endTime) < 0)
+                        return true;
+                } catch (ParseException pe) {
+                    pe.printStackTrace();
+                    return false;
+                }
+            }
+
+            else if (o.getStartDay() == currentDay && o.getEndDay() > currentDay) {
+                currentOpenTimes = o;
+
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                try {
+                    Date startTime = sdf.parse(currentOpenTimes.getStartTime());
+                    // have to parse it from date to string to date. how fun
+                    Date currentTime = sdf.parse(sdf.format(now.getTime()));
+
+                    if (currentTime.compareTo(startTime) > 0)
+                        return true;
+                } catch (ParseException pe) {
+                    pe.printStackTrace();
+                    return false;
+                }
+            }
+
+            else if (o.getStartDay() < currentDay && o.getEndDay() == currentDay) {
+                currentOpenTimes = o;
+
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                try {
+                    Date endTime = sdf.parse(currentOpenTimes.getEndTime());
+                    // have to parse it from date to string to date. how fun
+                    Date currentTime = sdf.parse(sdf.format(now.getTime()));
+
+                    if (currentTime.compareTo(endTime) < 0)
                         return true;
                 } catch (ParseException pe) {
                     pe.printStackTrace();
