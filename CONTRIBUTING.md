@@ -107,24 +107,23 @@ Before you submit your Merge Request (MR) consider the following steps:
     
     For example if I compose the following function:
 
-    ```python
-    # file.py
-    def oneplus(num):
-        return num + 1
+    ```java
+    int oneplus(int num) {
+        return num + 1;
+    }
     ```
 
     then I would additionally write the following test case:
     
-    ```python 
-    # test_file.py
-    def TestOneplus(TestCase):
-        assertEquals(oneplus(1), 2)    
+    ```java 
+    @Test
+    void TestOneplus() {
+        assertEquals(2, oneplus(1));
+    }
     ``` 
 * Before you push your code to GitLab it is suggested that you run all unit tests locally.
-    
-    ```sh
-    python manage.py test
-    ```
+  * [Guide for running local unit tests in Android Studio](https://developer.android.com/training/testing/unit-testing/local-unit-tests.html#run)
+
 
 * Commit your changes using a descriptive commit message that follows our
     [commit message conventions](#commit). Adherence to these conventions is strongly
@@ -203,7 +202,7 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 are working:
 
 * All features or bug fixes **must be tested** by one or more specs (unit-tests).
-* We follow [the PEP8 styleguide][style-guide].
+* This project doesn't have a strict style guide, but [this](https://source.android.com/source/code-style.html) is generally good to follow.
 
 ## <a name="commit"></a> Commit Message Guidelines
 
