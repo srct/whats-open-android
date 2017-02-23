@@ -70,8 +70,9 @@ public class FacilityPresenter {
 
 
 
-    // Parses the schedule into an HTML string
-    // Kind of a hacky approach
+    // Parses the schedule into an HTML string.
+    // Kind of a hacky approach. That being said, this is certainly a lot simpler to test
+    // than the alternative.
     public String getSchedule(Facility facility, Calendar now) {
         RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
         int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
@@ -94,7 +95,9 @@ public class FacilityPresenter {
             if(o.getStartDay() <= currentDay && o.getEndDay() >= currentDay)
                 scheduleString.append("<strong>");
 
-            scheduleString.append("<b>" + parseIntToDay(o.getStartDay()) + "</b>: ");
+            scheduleString.append("<b>");
+            scheduleString.append(parseIntToDay(o.getStartDay()));
+            scheduleString.append("</b>: ");
             scheduleString.append(parseTo12HourTime(o.getStartTime()));
             scheduleString.append(" - ");
             scheduleString.append(parseTo12HourTime(o.getEndTime()));

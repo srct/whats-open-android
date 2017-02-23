@@ -1,7 +1,10 @@
 ## Summary
-Include several sentences explaining the issue (rationale,
-implementation ideas, mock-ups, etc). Be concise.
+Here you should include two to three sentences explaining the thought process
+about the current issue. Perhaps a picture? Some details that could best help someone,
+especially someone new, understand the goal of the issue and how they should best
+approach the problem.
 
 ## Helpful Links
-Give a bulleted list of resources that could help one tackle this
-issue. Try to be as helpful as possible.
+Here you should include a bullet point list of links to documentation, stack overflow,
+whatever, that could help guide someone on what it is they are trying to do.
+Essentially, a list of links to point them in the right direction.
