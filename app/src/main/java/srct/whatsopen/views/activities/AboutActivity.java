@@ -37,7 +37,7 @@ public class AboutActivity extends MaterialAboutActivity {
                 .build());
         appCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("Version")
-                .subText("0.1")
+                .subText("1.0 \"Cassowary Edition\"")
                 .icon(R.drawable.ic_info_outline_black_24dp)
                 .build());
 
