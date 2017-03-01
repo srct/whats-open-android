@@ -50,15 +50,16 @@ public class FacilityListAdapter extends
 
     private String mMode;
     private Realm mRealm;
+    private Context mContext;
     private Activity mActivity; // this is pretty much just for transition animations
 
     // Mode describes the filtering for the elements to be displayed
-    public FacilityListAdapter(Context context,
-                               OrderedRealmCollection<Facility> data,
+    public FacilityListAdapter(Context context, OrderedRealmCollection<Facility> data,
                                String mode, Realm realm, Activity activity) {
 
-        super(context, data, true);
+        super(data, true);
 
+        mContext = context;
         mMode = mode;
         mRealm = realm;
         mActivity = activity;
@@ -84,10 +85,10 @@ public class FacilityListAdapter extends
         if (facility.isOpen()) {
             // set the RV cell to be highlighted
             holder.itemView.setBackgroundColor(ContextCompat
-                    .getColor(context, R.color.facilityOpen));
+                    .getColor(mContext, R.color.facilityOpen));
         } else {
             holder.itemView.setBackgroundColor(ContextCompat
-                    .getColor(context, R.color.facilityClosed));
+                    .getColor(mContext, R.color.facilityClosed));
         }
 
         if (facility.isFavorited()) {
@@ -103,7 +104,7 @@ public class FacilityListAdapter extends
 
     // Sets the duration text according to the user's settings
     private void displayStatusDurationText(Facility facility, ViewHolder holder) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         String setting = preferences.getString("list_view_information_preference",
                 "display_duration_both");
 
@@ -139,7 +140,7 @@ public class FacilityListAdapter extends
     // Helper method to set the facility item layout's padding
     // Have to convert from pixels to dp
     private void setItemPaddingInDp(LinearLayout layout, int paddingPx) {
-        float scale = context.getResources().getDisplayMetrics().density;
+        float scale = mContext.getResources().getDisplayMetrics().density;
         int paddingTop = (int) (paddingPx * scale + 0.5f);
         int paddingBottom = (int) (paddingPx * scale + 0.5f);
 
@@ -230,7 +231,7 @@ public class FacilityListAdapter extends
         // transitions to the facility's detail view
         @OnClick(R.id.text_layout)
         public void expandFacilityView() {
-            Intent intent = new Intent(context, DetailActivity.class);
+            Intent intent = new Intent(mContext, DetailActivity.class);
             intent.putExtra("name", data.getName());
 
             // for some reason I need this for the transition to work
@@ -238,7 +239,7 @@ public class FacilityListAdapter extends
             ActivityOptionsCompat transitionActivityOptions =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, p1);
 
-            context.startActivity(intent, transitionActivityOptions.toBundle());
+            mContext.startActivity(intent, transitionActivityOptions.toBundle());
         }
 
         // toggles favorite status
@@ -257,7 +258,7 @@ public class FacilityListAdapter extends
 
         @Override
         public Context getContext() {
-            return context;
+            return mContext;
         }
     }
 }
