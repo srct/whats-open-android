@@ -234,12 +234,7 @@ public class FacilityListAdapter extends
             Intent intent = new Intent(mContext, DetailActivity.class);
             intent.putExtra("name", data.getName());
 
-            // for some reason I need this for the transition to work
-            Pair<View, String> p1 = Pair.create((View) nameTextView, "");
-            ActivityOptionsCompat transitionActivityOptions =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, p1);
-
-            mContext.startActivity(intent, transitionActivityOptions.toBundle());
+            mContext.startActivity(intent);
         }
 
         // toggles favorite status
