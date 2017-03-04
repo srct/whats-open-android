@@ -20,11 +20,14 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics.Builder()
-                .core(new CrashlyticsCore.Builder()
-                        .disabled(BuildConfig.DEBUG)
-                        .build())
-                .build());
+
+        if(!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics.Builder()
+                    .core(new CrashlyticsCore.Builder()
+                            .disabled(BuildConfig.DEBUG)
+                            .build())
+                    .build());
+        }
 
         // Set up LeakCanary for memory leak detection
         if(LeakCanary.isInAnalyzerProcess(this)) {
