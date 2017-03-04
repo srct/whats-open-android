@@ -33,6 +33,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'Boolean', 'enableCrashlytics', 'true'
+        }
+        debug {
+            buildConfigField 'Boolean', 'enableCrashlytics', 'false'
         }
     }
     compileOptions {
