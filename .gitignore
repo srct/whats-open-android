@@ -44,3 +44,6 @@ captures/
 
 # OSX
 .DS_Store
+
+# Fabric properties
+fabric.properties
