@@ -29,6 +29,7 @@ import srct.whatsopen.model.SpecialSchedule;
 import srct.whatsopen.util.NotificationReceiver;
 import srct.whatsopen.views.NotificationView;
 
+
 public class NotificationPresenter {
 
     private NotificationView mNotificationView;
