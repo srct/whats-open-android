@@ -271,14 +271,17 @@ public class MainPresenter {
         }
 
         // Else return the opening time of the next day
-
         int nextDay = findNextDay(openTimesList, currentDay);
-        String nextDayStr = FacilityPresenter.parseIntToDay(nextDay);
 
         String openingTime = getCurrentStartTime(openTimesList, nextDay);
         openingTime = FacilityPresenter.parseTo12HourTime(openingTime);
 
-        durationMessage = "Opens next on " + nextDayStr + " at " + openingTime;
+        if(nextDay == (currentDay+1)%7) {
+            durationMessage = "Opens tomorrow at " + openingTime;
+        } else {
+            String nextDayStr = FacilityPresenter.parseIntToDay(nextDay);
+            durationMessage = "Opens next on " + nextDayStr + " at " + openingTime;
+        }
 
         return durationMessage;
     }
