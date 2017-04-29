@@ -64,10 +64,11 @@ public class MainPresenter {
                     @Override
                     public void onError(Throwable e) {
                         updateOpenStatus();
-                        if(mMainView != null)
+                        if(mMainView != null) {
                             mMainView.dismissProgressBar();
-                        Toast.makeText(mMainView.getContext(), "Error getting data; " +
-                                "schedules may be out of date.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mMainView.getContext(), "Error getting data; " +
+                                           "schedules may be out of date.", Toast.LENGTH_LONG).show();
+                        }
                     }
                     @Override
                     public void onNext(List<Facility> facilities) {
