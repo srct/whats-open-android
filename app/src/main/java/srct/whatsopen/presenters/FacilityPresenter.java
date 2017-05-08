@@ -118,14 +118,12 @@ public class FacilityPresenter {
             if(o.getStartTime().equals("00:00:00") && o.getEndTime().equals("23:59:59")
                     || o.getEndTime().equals("00:00:00")) {
                 doesNotClose = true;
-            }
 
-            // check to make sure the facility is open every day of the week
-            // so, if the start day is 0 and the end day is 6, 6 - 0 + 1 == 7
-            counter += (o.getEndDay() - o.getStartDay()) + 1;
+                counter++;
+            }
         }
 
-        if(counter != 7) {
+        if(counter != openTimesList.size()) {
             doesNotClose = false;
         }
 
