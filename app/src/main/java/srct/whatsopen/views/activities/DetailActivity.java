@@ -35,6 +35,8 @@ import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.NotificationSettings;
+import srct.whatsopen.model.Schedule;
+import srct.whatsopen.model.SpecialSchedule;
 import srct.whatsopen.views.FacilityView;
 import srct.whatsopen.presenters.FacilityPresenter;
 import srct.whatsopen.views.fragments.NotificationDialogFragment;
@@ -51,6 +53,8 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     TextView locationTextView;
     @BindView(R.id.schedule_text)
     TextView scheduleTextView;
+    @BindView(R.id.special_schedule_duration_text)
+    TextView specialScheduleDurationTextView;
     @BindView(R.id.notification_button)
     Button notificationButton;
 
@@ -83,7 +87,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     private void setUpAnimations() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Slide slide = new Slide();
-            slide.setSlideEdge(Gravity.LEFT);
+            slide.setSlideEdge(Gravity.BOTTOM);
             slide.setDuration(300);
             getWindow().setEnterTransition(slide);
         }
@@ -198,8 +202,18 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
 
         locationTextView.setText(mFacility.getLocation());
 
-        scheduleTextView.setText(Html.fromHtml(mPresenter
-                .getSchedule(mFacility, Calendar.getInstance())));
+        Calendar now = Calendar.getInstance();
+        Schedule currentSchedule = mPresenter.getActiveSchedule(mFacility, now);
+        scheduleTextView.setText(Html.fromHtml(mPresenter.getScheduleText(currentSchedule, now)));
+
+        // Show the SpecialSchedule duration if necessary
+        if(currentSchedule instanceof SpecialSchedule) {
+            specialScheduleDurationTextView.setVisibility(View.VISIBLE);
+            String endDate = FacilityPresenter.parseYMDtoMDY(currentSchedule.getValidEnd());
+            specialScheduleDurationTextView.setText("Lasts until " + endDate);
+        } else {
+            specialScheduleDurationTextView.setVisibility(View.GONE);
+        }
     }
 
     // Sets the notification button text to edit if a Notification exists

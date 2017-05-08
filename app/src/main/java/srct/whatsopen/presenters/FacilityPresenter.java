@@ -19,6 +19,7 @@ import io.realm.RealmList;
 import srct.whatsopen.R;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.OpenTimes;
+import srct.whatsopen.model.Schedule;
 import srct.whatsopen.model.SpecialSchedule;
 import srct.whatsopen.views.FacilityView;
 
@@ -73,8 +74,8 @@ public class FacilityPresenter {
     // Parses the schedule into an HTML string.
     // Kind of a hacky approach. That being said, this is certainly a lot simpler to test
     // than the alternative.
-    public String getSchedule(Facility facility, Calendar now) {
-        RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
+    public String getScheduleText(Schedule schedule, Calendar now) {
+        RealmList<OpenTimes> openTimesList = schedule.getOpenTimesList();
         int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
 
         if(openTimesList.size() == 0)
@@ -143,6 +144,19 @@ public class FacilityPresenter {
         }
     }
 
+    // Parses String with format YYYY-MM-DD to MM/DD
+    public static String parseYMDtoMDY(String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            final Date date = sdf.parse(time);
+            return new SimpleDateFormat("MM/dd/yy").format(date);
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+            return null;
+        }
+    }
+
     // Parses an integer to a String of the day of the week
     public static String parseIntToDay(int day) {
         switch(day) {
@@ -166,8 +180,8 @@ public class FacilityPresenter {
     }
 
     // Returns the active schedule given the current date
-    private RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
-        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
+    public Schedule getActiveSchedule(Facility facility, Calendar now) {
+        Schedule schedule = facility.getMainSchedule();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -178,8 +192,7 @@ public class FacilityPresenter {
                 Date endDate = sdf.parse(s.getValidEnd());
 
                 if(currentDate.compareTo(startDate) >= 0 && currentDate.compareTo(endDate) <= 0) {
-                    openTimesList = s.getOpenTimesList();
-                    return openTimesList;
+                    return s;
                 }
             }
         } catch (ParseException pe) {
@@ -187,6 +200,6 @@ public class FacilityPresenter {
             return null;
         }
 
-        return openTimesList;
+        return schedule;
     }
 }
