@@ -32,14 +32,17 @@ public class MainPresenter {
 
     private MainView mMainView;
     private SharedPreferences pref;
+    private Realm mRealm;
 
     public void attachView(MainView view) {
-        this.mMainView = view;
+        mMainView = view;
+        mRealm = Realm.getDefaultInstance();
         pref = PreferenceManager.getDefaultSharedPreferences(mMainView.getContext());
     }
 
     public void detachView() {
-        this.mMainView = null;
+        mMainView = null;
+        mRealm.close();
     }
 
     // Gets a Call from the given Retrofit service, then asynchronously executes it
@@ -92,17 +95,14 @@ public class MainPresenter {
 
     // Asynchronously writes the facility list to Realm
     private void writeToRealm(List<Facility> facilities) {
-        final Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(bgRealm -> bgRealm.copyToRealmOrUpdate(facilities));
-        realm.close();
+        mRealm.executeTransactionAsync(bgRealm -> bgRealm.copyToRealmOrUpdate(facilities));
 
         removeDeletedFacilities(facilities);
     }
 
     // Removes the facilities from Realm that are no longer in the Api
     private void removeDeletedFacilities(List<Facility> facilities) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Facility> results = realm.where(Facility.class).findAll();
+        RealmResults<Facility> results = mRealm.where(Facility.class).findAll();
 
         // Not a pretty way to do this, but Facilities shouldn't ever have too many items anyway
         for(Facility r : results) {
@@ -117,36 +117,28 @@ public class MainPresenter {
                 removeFacilityFromRealm(r);
             }
         }
-
-        realm.close();
     }
 
     // Removes the given Facility from Realm
     private void removeFacilityFromRealm(Facility facility) {
-        Realm realm = Realm.getDefaultInstance();
-
         final String name = facility.getName();
-        realm.executeTransactionAsync((bgRealm) -> {
+        mRealm.executeTransactionAsync((bgRealm) -> {
             RealmResults<Facility> results = bgRealm.where(Facility.class).equalTo("mName", name)
                     .findAll();
 
             results.deleteAllFromRealm();
         });
-
-        realm.close();
     }
 
     // Sets the open status and status duration of each facility in the Realm instance
     private void updateOpenStatus() {
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(bgRealm -> {
+       mRealm.executeTransactionAsync(bgRealm -> {
             List<Facility> facilities = bgRealm.where(Facility.class).findAll();
             for(Facility f : facilities) {
                 f.setOpen(getOpenStatus(f, Calendar.getInstance()));
                 f.setStatusDuration(getStatusDuration(f, Calendar.getInstance()));
             }
-        }, null, null);
-        realm.close();
+       }, null, null);
     }
 
     // Uses the device time to determine which facilities should be open
@@ -156,7 +148,7 @@ public class MainPresenter {
         // have to mess with the current day value, as Calender.DAY_OF_WEEK
         // starts with Sunday as 1 and the Whats Open Api starts with Monday at 0
         int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
-        OpenTimes currentOpenTimes = null;
+        OpenTimes currentOpenTimes;
 
         for(OpenTimes o : openTimesList) {
             if (o.getStartDay() == currentDay && o.getEndDay() == currentDay) {

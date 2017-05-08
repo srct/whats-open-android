@@ -142,7 +142,7 @@ public class FacilityPresenter {
         }
     }
 
-    // Parses String with format YYYY-MM-DD to MM/DD
+    // Parses String with format YYYY-MM-DD to MM/DD/YY
     public static String parseYMDtoMDY(String time) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 

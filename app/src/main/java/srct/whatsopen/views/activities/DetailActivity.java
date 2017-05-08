@@ -62,6 +62,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     private FacilityPresenter mPresenter;
     private Facility mFacility;
     private boolean inEditMode;
+    private Realm mRealm;
 
 
     @Override
@@ -69,6 +70,9 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         setUpAnimations();
+
+        // Get Realm instance
+        mRealm = Realm.getDefaultInstance();
 
         getFacility(getIntent().getStringExtra("name"));
 
@@ -103,6 +107,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
     protected void onDestroy() {
         mPresenter.detachView();
         super.onDestroy();
+        mRealm.close();
     }
 
     @Override
@@ -159,9 +164,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
 
     // Queries Realm for the facility matching the key
     private void getFacility(String key) {
-        Realm realm = Realm.getDefaultInstance();
-        mFacility = realm.where(Facility.class).equalTo("mName", key).findFirst();
-        realm.close();
+        mFacility = mRealm.where(Facility.class).equalTo("mName", key).findFirst();
     }
 
     // Configures the toolbar title, actions, etc
@@ -181,7 +184,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
-    public static TextView getTextViewTitle(Toolbar toolbar){
+    public static TextView getTextViewTitle(Toolbar toolbar) {
         TextView textViewTitle = null;
         for(int i = 0; i<toolbar.getChildCount(); i++) {
             View view = toolbar.getChildAt(i);
@@ -218,10 +221,8 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
 
     // Sets the notification button text to edit if a Notification exists
     private void setNotificationStatus() {
-        Realm realm = Realm.getDefaultInstance();
-        NotificationSettings notificationSettings = realm.where(NotificationSettings.class)
+        NotificationSettings notificationSettings = mRealm.where(NotificationSettings.class)
                 .equalTo("name", mFacility.getName()).findFirst();
-        realm.close();
 
         if (notificationSettings != null) {
             inEditMode = true;
