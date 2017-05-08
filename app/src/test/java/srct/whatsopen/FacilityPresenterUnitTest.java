@@ -1,9 +1,5 @@
 package srct.whatsopen;
 
-import android.content.Context;
-import android.graphics.Path;
-import android.support.v7.app.AppCompatActivity;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,8 +9,8 @@ import io.realm.RealmList;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.MainSchedule;
 import srct.whatsopen.model.OpenTimes;
+import srct.whatsopen.model.Schedule;
 import srct.whatsopen.model.SpecialSchedule;
-import srct.whatsopen.views.FacilityView;
 import srct.whatsopen.presenters.FacilityPresenter;
 
 import static org.junit.Assert.*;
@@ -49,10 +45,11 @@ public class FacilityPresenterUnitTest {
     public void testFacilitySchedule() {
         // Set date
         now.set(2017, 0, 9, 13, 0); // Monday, 1/9/2017, 13:00:00
-        String schedule = mPresenter.getSchedule(mFacility, now);
+        Schedule schedule = mPresenter.getActiveSchedule(mFacility, now);
+        String scheduleText = mPresenter.getScheduleText(schedule, now);
 
         assertEquals("<strong><b>Monday</b>: 11:00 AM - 6:00 PM</strong><br/>" +
-                     "<b>Tuesday</b>: 1:00 PM - 6:00 PM", schedule);
+                     "<b>Tuesday</b>: 1:00 PM - 6:00 PM", scheduleText);
     }
 
     @Test
@@ -60,9 +57,10 @@ public class FacilityPresenterUnitTest {
         mFacility.setMainSchedule(new MainSchedule(new RealmList<OpenTimes>(),
         "2017-01-09", "2017-01-15"));
 
-        String schedule = mPresenter.getSchedule(mFacility, now);
+        Schedule schedule = mPresenter.getActiveSchedule(mFacility, now);
+        String scheduleText = mPresenter.getScheduleText(schedule, now);
 
-        assertEquals("No schedule available", schedule);
+        assertEquals("No schedule available", scheduleText);
     }
 
     @Test
@@ -83,10 +81,11 @@ public class FacilityPresenterUnitTest {
         // Set date
         now.set(2017, 2, 9, 12, 0); // Thursday, 3/9/2017, 12:00:00
 
-        String schedule = mPresenter.getSchedule(mFacility, now);
+        Schedule schedule = mPresenter.getActiveSchedule(mFacility, now);
+        String scheduleText = mPresenter.getScheduleText(schedule, now);
 
         assertEquals("<b>Monday</b>: 11:00 AM - 6:00 PM<br/>" +
-                "<b>Tuesday</b>: 1:00 PM - 6:00 PM", schedule);
+                "<b>Tuesday</b>: 1:00 PM - 6:00 PM", scheduleText);
     }
 
     @Test
@@ -97,9 +96,10 @@ public class FacilityPresenterUnitTest {
         mFacility.setMainSchedule(new MainSchedule(openTimesList,
                 "2017-01-09", "2017-01-15"));
 
-        String schedule = mPresenter.getSchedule(mFacility, now);
+        Schedule schedule = mPresenter.getActiveSchedule(mFacility, now);
+        String scheduleText = mPresenter.getScheduleText(schedule, now);
 
-        assertEquals("This facility is always open", schedule);
+        assertEquals("This facility is always open", scheduleText);
     }
 
     @Test
@@ -110,9 +110,10 @@ public class FacilityPresenterUnitTest {
         mFacility.setMainSchedule(new MainSchedule(openTimesList,
                 "2017-01-09", "2017-01-15"));
 
-        String schedule = mPresenter.getSchedule(mFacility, now);
+        Schedule schedule = mPresenter.getActiveSchedule(mFacility, now);
+        String scheduleText = mPresenter.getScheduleText(schedule, now);
 
         assertEquals("<b>Saturday</b>: 8:00 AM - 9:00 AM<br/>" +
-                "<b>Sunday</b>: 8:00 AM - 9:00 AM", schedule);
+                "<b>Sunday</b>: 8:00 AM - 9:00 AM", scheduleText);
     }
 }
