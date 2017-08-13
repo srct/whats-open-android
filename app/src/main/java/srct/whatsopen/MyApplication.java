@@ -20,8 +20,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        if (BuildConfig.enableCrashlytics)
-            Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
 
         // Set up LeakCanary for memory leak detection
         if(LeakCanary.isInAnalyzerProcess(this)) {
