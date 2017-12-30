@@ -1,11 +1,7 @@
-image: npetrovsky/docker-android-sdk-ndk
-
-variables:
-  ANDROID_COMPILE_SDK: "25"
-  ANDROID_BUILD_TOOLS: "26.0.2"
-  ANDROID_SDK_TOOLS: "24.4.1"
+image: jangrewe/gitlab-ci-android
 
 before_script:
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
   - chmod +x ./gradlew
 
 stages:
@@ -18,7 +14,7 @@ build:
     - ./gradlew assembleDebug
   artifacts:
     paths:
-    - app/build/outputs/
+    - app/build/outputs/apk/app-debug.apk
 
 unitTests:
   stage: test
