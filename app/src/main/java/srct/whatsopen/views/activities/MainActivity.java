@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,8 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-
-import com.astuetz.PagerSlidingTabStrip;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -106,9 +105,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mViewPager.setAdapter(new FacilityListFragmentPagerAdapter(getSupportFragmentManager()));
 
         // Now give the TabStrip the ViewPager
-        PagerSlidingTabStrip tabStrip = ButterKnife.findById(this, R.id.tabs);
-        tabStrip.setTabPaddingLeftRight(0);
-        tabStrip.setViewPager(mViewPager);
+        TabLayout tabLayout = ButterKnife.findById(this, R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
 
         // Set the default tab to 'All'
         int tabNumber = getDefaultTabNumber();
