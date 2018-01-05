@@ -32,7 +32,7 @@ public class FacilityPresenterUnitTest {
         openTimesList.add(o1);
         openTimesList.add(o2);
         MainSchedule mainSchedule = new MainSchedule(openTimesList,
-                "2017-01-09", "2017-01-15");
+                "2017-01-09", "2017-01-15", false);
 
         Location location = new Location("Whitetop Hall");
         mFacility = new Facility("Chef's Table at Brooklyn Fare", location,
@@ -57,7 +57,7 @@ public class FacilityPresenterUnitTest {
     @Test
     public void testFacilityScheduleNoSchedule() {
         mFacility.setMainSchedule(new MainSchedule(new RealmList<OpenTimes>(),
-        "2017-01-09", "2017-01-15"));
+        "2017-01-09", "2017-01-15", false));
 
         Schedule schedule = mPresenter.getActiveSchedule(mFacility, now);
         String scheduleText = mPresenter.getScheduleText(schedule, now);
@@ -71,9 +71,9 @@ public class FacilityPresenterUnitTest {
 
         // Set SpecialSchedule
         SpecialSchedule s1 = new SpecialSchedule(openTimesList,
-                "2017-03-06", "2017-03-15");
+                "2017-03-06", "2017-03-15", false);
         SpecialSchedule s2 = new SpecialSchedule(openTimesList,
-                "2017-06-09", "2017-07-15");
+                "2017-06-09", "2017-07-15", false);
         RealmList<SpecialSchedule> specialSchedules = new RealmList<>();
         specialSchedules.add(s1);
         specialSchedules.add(s2);
@@ -96,7 +96,7 @@ public class FacilityPresenterUnitTest {
         openTimesList.add(new OpenTimes(0, 6, "00:00:00", "23:59:59"));
         mFacility.setOpen(true);
         mFacility.setMainSchedule(new MainSchedule(openTimesList,
-                "2017-01-09", "2017-01-15"));
+                "2017-01-09", "2017-01-15", true));
 
         Schedule schedule = mPresenter.getActiveSchedule(mFacility, now);
         String scheduleText = mPresenter.getScheduleText(schedule, now);
@@ -110,7 +110,7 @@ public class FacilityPresenterUnitTest {
         openTimesList.add(new OpenTimes(5, 5, "08:00:00", "09:00:00"));
         openTimesList.add(new OpenTimes(6, 6, "08:00:00", "09:00:00"));
         mFacility.setMainSchedule(new MainSchedule(openTimesList,
-                "2017-01-09", "2017-01-15"));
+                "2017-01-09", "2017-01-15", false));
 
         Schedule schedule = mPresenter.getActiveSchedule(mFacility, now);
         String scheduleText = mPresenter.getScheduleText(schedule, now);

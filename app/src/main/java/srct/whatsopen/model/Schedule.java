@@ -8,4 +8,6 @@ public interface Schedule {
     RealmList<OpenTimes> getOpenTimesList();
 
     String getValidEnd();
+
+    Boolean isOpen24Hours();
 }

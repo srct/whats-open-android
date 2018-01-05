@@ -16,10 +16,15 @@ open class SpecialSchedule : RealmObject, Schedule {
     @SerializedName("valid_end")
     private var validEnd: String? = null
 
-    constructor(openTimesList: RealmList<OpenTimes>, validStart: String, validEnd: String) {
+    @SerializedName("twenty_four_hours")
+    var openTwentyFourHours: Boolean? = null
+
+    constructor(openTimesList: RealmList<OpenTimes>, validStart: String, validEnd: String,
+                openTwentyFourHours: Boolean) {
         mOpenTimesList = openTimesList
         this.validStart = validStart
         this.validEnd = validEnd
+        this.openTwentyFourHours = openTwentyFourHours
     }
 
     constructor() {}
@@ -38,5 +43,9 @@ open class SpecialSchedule : RealmObject, Schedule {
 
     fun setOpenTimesList(openTimesList: RealmList<OpenTimes>) {
         mOpenTimesList = openTimesList
+    }
+
+    override fun isOpen24Hours(): Boolean? {
+        return openTwentyFourHours
     }
 }

@@ -23,6 +23,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import srct.whatsopen.model.Facility;
 import srct.whatsopen.model.OpenTimes;
+import srct.whatsopen.model.Schedule;
 import srct.whatsopen.model.SpecialSchedule;
 import srct.whatsopen.util.WhatsOpenService;
 import srct.whatsopen.util.WhatsOpenApi;
@@ -48,7 +49,8 @@ public class MainPresenter {
     // Gets a Call from the given Retrofit service, then asynchronously executes it
     // On success, copies the resulting facility list to the Realm DB
     public void loadFacilities() {
-        mMainView.showProgressBar();
+        if (mMainView != null)
+            mMainView.showProgressBar();
 
         // Get WhatsOpenApi singleton
         WhatsOpenApi service = WhatsOpenService.getInstance();
@@ -68,7 +70,6 @@ public class MainPresenter {
                     public void onError(Throwable e) {
                         updateOpenStatus();
                         if(mMainView != null) {
-                            mMainView.dismissProgressBar();
                             Toast.makeText(mMainView.getContext(), "Error getting data; " +
                                            "schedules may be out of date.", Toast.LENGTH_LONG).show();
                         }
@@ -143,7 +144,13 @@ public class MainPresenter {
 
     // Uses the device time to determine which facilities should be open
     public boolean getOpenStatus(Facility facility, Calendar now) {
-        RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
+        Schedule schedule = getActiveSchedule(facility, now);
+
+        if (schedule.isOpen24Hours()) {
+            return true;
+        }
+
+        RealmList<OpenTimes> openTimesList = schedule.getOpenTimesList();
 
         // have to mess with the current day value, as Calender.DAY_OF_WEEK
         // starts with Sunday as 1 and the Whats Open Api starts with Monday at 0
@@ -154,18 +161,10 @@ public class MainPresenter {
             if (o.getStartDay() == currentDay && o.getEndDay() == currentDay) {
                 currentOpenTimes = o;
 
-                // for some reason in the Api this signifies a facility that's open 24/7, sometimes
-                // praying for that api v2
-                if (currentOpenTimes.getStartTime().equals("00:00:00")
-                        && currentOpenTimes.getEndTime().equals("00:00:00")) {
-                    return true;
-                }
-
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                 try {
                     Date startTime = sdf.parse(currentOpenTimes.getStartTime());
                     Date endTime = sdf.parse(currentOpenTimes.getEndTime());
-                    // have to parse it from date to string to date. how fun
                     Date currentTime = sdf.parse(sdf.format(now.getTime()));
 
                     if (currentTime.compareTo(startTime) > 0 && currentTime.compareTo(endTime) < 0)
@@ -182,7 +181,6 @@ public class MainPresenter {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                 try {
                     Date startTime = sdf.parse(currentOpenTimes.getStartTime());
-                    // have to parse it from date to string to date. how fun
                     Date currentTime = sdf.parse(sdf.format(now.getTime()));
 
                     if (currentTime.compareTo(startTime) > 0)
@@ -199,7 +197,6 @@ public class MainPresenter {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                 try {
                     Date endTime = sdf.parse(currentOpenTimes.getEndTime());
-                    // have to parse it from date to string to date. how fun
                     Date currentTime = sdf.parse(sdf.format(now.getTime()));
 
                     if (currentTime.compareTo(endTime) < 0)
@@ -216,7 +213,13 @@ public class MainPresenter {
 
     // Finds the next time the facility closes or opens and returns it
     public String getStatusDuration(Facility facility, Calendar now) {
-        RealmList<OpenTimes> openTimesList = getActiveSchedule(facility, now);
+        Schedule schedule = getActiveSchedule(facility, now);
+
+        if(schedule.isOpen24Hours()) {
+            return "Open 24/7";
+        }
+
+        RealmList<OpenTimes> openTimesList = schedule.getOpenTimesList();
 
         if(openTimesList == null)
             return "";
@@ -228,10 +231,6 @@ public class MainPresenter {
         String durationMessage;
 
         if(facility.isOpen()) {
-            if(FacilityPresenter.facilityDoesNotClose(openTimesList)) {
-                return "Open 24/7";
-            }
-
             if(getCurrentEndTime(openTimesList, currentDay).equals("23:59:59") &&
                     getCurrentStartTime(openTimesList, (currentDay+1)%7).equals("00:00:00")) {
                 currentDay++;
@@ -321,8 +320,8 @@ public class MainPresenter {
     }
 
     // Returns the active schedule given the current date
-    private RealmList<OpenTimes> getActiveSchedule(Facility facility, Calendar now) {
-        RealmList<OpenTimes> openTimesList = facility.getMainSchedule().getOpenTimesList();
+    private Schedule getActiveSchedule(Facility facility, Calendar now) {
+        Schedule schedule = facility.getMainSchedule();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -333,8 +332,7 @@ public class MainPresenter {
                 Date endDate = sdf.parse(s.getValidEnd());
 
                 if(currentDate.compareTo(startDate) >= 0 && currentDate.compareTo(endDate) <= 0) {
-                    openTimesList = s.getOpenTimesList();
-                    return openTimesList;
+                    return s;
                 }
             }
         } catch (ParseException pe) {
@@ -342,6 +340,6 @@ public class MainPresenter {
             return null;
         }
 
-        return openTimesList;
+        return schedule;
     }
 }

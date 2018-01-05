@@ -137,7 +137,7 @@ public class NotificationPresenter {
                                                NotificationSettings notificationSettings) {
         Realm realm = Realm.getDefaultInstance();
         Facility facility = realm.where(Facility.class)
-                .equalTo("mName", notificationSettings.name).findFirst();
+                .equalTo("name", notificationSettings.name).findFirst();
         Schedule schedule = getActiveSchedule(facility, Calendar.getInstance());
 
         if(!schedule.equals(facility.getMainSchedule())) {

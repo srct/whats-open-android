@@ -78,11 +78,11 @@ public class FacilityPresenter {
         RealmList<OpenTimes> openTimesList = schedule.getOpenTimesList();
         int currentDay = (5 + now.get(Calendar.DAY_OF_WEEK)) % 7;
 
+        if(schedule.isOpen24Hours())
+            return "This facility is always open";
+
         if(openTimesList.size() == 0)
            return "No schedule available";
-
-        if(facilityDoesNotClose(openTimesList))
-            return "This facility is always open";
 
         StringBuilder scheduleString = new StringBuilder();
         boolean first = true;
@@ -108,26 +108,6 @@ public class FacilityPresenter {
         }
 
         return scheduleString.toString();
-    }
-
-    public static boolean facilityDoesNotClose(List<OpenTimes> openTimesList) {
-        boolean doesNotClose = false;
-
-        int counter = 0;
-        for(OpenTimes o : openTimesList) {
-            if(o.getStartTime().equals("00:00:00") && o.getEndTime().equals("23:59:59")
-                    || o.getEndTime().equals("00:00:00")) {
-                doesNotClose = true;
-
-                counter++;
-            }
-        }
-
-        if(counter != openTimesList.size()) {
-            doesNotClose = false;
-        }
-
-        return doesNotClose;
     }
 
     // Parses 24 hour formatted time String to 12 hour formatted time String
