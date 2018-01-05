@@ -7,6 +7,7 @@ import java.util.Calendar;
 
 import io.realm.RealmList;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.model.Location;
 import srct.whatsopen.model.MainSchedule;
 import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.model.SpecialSchedule;
@@ -41,7 +42,8 @@ public class MainPresenterUnitTest {
         specialSchedules.add(s1);
         specialSchedules.add(s2);
 
-        mFacility = new Facility("The French Laundry", "Johnson Center",
+        Location location = new Location("Johnson Center");
+        mFacility = new Facility("The French Laundry", location,
                 mainSchedule, specialSchedules, false, true, "");
 
         now = Calendar.getInstance();

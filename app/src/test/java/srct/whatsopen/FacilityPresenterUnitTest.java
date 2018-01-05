@@ -7,6 +7,7 @@ import java.util.Calendar;
 
 import io.realm.RealmList;
 import srct.whatsopen.model.Facility;
+import srct.whatsopen.model.Location;
 import srct.whatsopen.model.MainSchedule;
 import srct.whatsopen.model.OpenTimes;
 import srct.whatsopen.model.Schedule;
@@ -33,7 +34,8 @@ public class FacilityPresenterUnitTest {
         MainSchedule mainSchedule = new MainSchedule(openTimesList,
                 "2017-01-09", "2017-01-15");
 
-        mFacility = new Facility("Chef's Table at Brooklyn Fare", "Whitetop Hall",
+        Location location = new Location("Whitetop Hall");
+        mFacility = new Facility("Chef's Table at Brooklyn Fare", location,
                 mainSchedule, new RealmList<>(), false, true, "");
 
         now = Calendar.getInstance();
