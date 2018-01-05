@@ -1,5 +1,7 @@
 package srct.whatsopen;
 
+import srct.whatsopen.BuildConfig;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -7,7 +9,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 
-import com.crashlytics.android.BuildConfig;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.squareup.leakcanary.LeakCanary;
