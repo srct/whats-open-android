@@ -164,7 +164,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
 
     // Queries Realm for the facility matching the key
     private void getFacility(String key) {
-        mFacility = mRealm.where(Facility.class).equalTo("mName", key).findFirst();
+        mFacility = mRealm.where(Facility.class).equalTo("name", key).findFirst();
     }
 
     // Configures the toolbar title, actions, etc
@@ -203,7 +203,7 @@ public class DetailActivity extends AppCompatActivity implements FacilityView,
 
         openDurationTextView.setText(mFacility.getStatusDuration());
 
-        locationTextView.setText(mFacility.getLocation());
+        locationTextView.setText(mFacility.getLocation().getBuilding());
 
         Calendar now = Calendar.getInstance();
         Schedule currentSchedule = mPresenter.getActiveSchedule(mFacility, now);

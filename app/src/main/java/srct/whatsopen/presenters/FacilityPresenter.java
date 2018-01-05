@@ -59,7 +59,7 @@ public class FacilityPresenter {
         realm.executeTransactionAsync(bgRealm -> {
             // have to re-query for the object as it was created on a separate thread
             Facility f = bgRealm.where(Facility.class)
-                    .equalTo("mName", facilityName).findFirst();
+                    .equalTo("name", facilityName).findFirst();
 
             f.setFavorited(status);
             editor.putBoolean(facilityName+"FavoriteStatus", status);

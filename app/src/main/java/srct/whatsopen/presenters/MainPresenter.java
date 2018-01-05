@@ -123,7 +123,7 @@ public class MainPresenter {
     private void removeFacilityFromRealm(Facility facility) {
         final String name = facility.getName();
         mRealm.executeTransactionAsync((bgRealm) -> {
-            RealmResults<Facility> results = bgRealm.where(Facility.class).equalTo("mName", name)
+            RealmResults<Facility> results = bgRealm.where(Facility.class).equalTo("name", name)
                     .findAll();
 
             results.deleteAllFromRealm();

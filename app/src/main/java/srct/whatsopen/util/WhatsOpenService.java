@@ -19,7 +19,7 @@ public class WhatsOpenService {
     private static volatile Retrofit sRetrofit = null;
     private static WhatsOpenApi mService;
 
-    private static final String BASE_URL = "https://whatsopen.gmu.edu/api/";
+    private static final String BASE_URL = "https://api.srct.gmu.edu/whatsopen/v2/";
 
     public WhatsOpenService() {
     }

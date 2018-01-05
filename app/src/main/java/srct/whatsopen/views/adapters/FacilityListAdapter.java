@@ -161,7 +161,7 @@ public class FacilityListAdapter extends
 
                 if(constraint != null && getData() != null) {
                     RealmResults<Facility> results = getData().where()
-                            .contains("mName", constraint.toString(), Case.INSENSITIVE)
+                            .contains("name", constraint.toString(), Case.INSENSITIVE)
                             .findAll();
                     updateData(results);
                 }
