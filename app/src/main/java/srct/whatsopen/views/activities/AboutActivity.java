@@ -37,7 +37,7 @@ public class AboutActivity extends MaterialAboutActivity {
                 .build());
         appCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("Version")
-                .subText("1.0 \"Cassowary Edition\"")
+                .subText("1.0.4 \"Cassowary Edition\"")
                 .icon(R.drawable.ic_info_outline_black_24dp)
                 .build());
 
@@ -46,7 +46,7 @@ public class AboutActivity extends MaterialAboutActivity {
         contributorsCardBuilder.addItem(new MaterialAboutActionItem.Builder()
                 .text("Version 1.0")
                 .icon(R.drawable.ic_people_black_24dp)
-                .subText("Robert Hitt, Tanner Grehawick, Jason Yeomans")
+                .subText("Robert Hitt, Tanner Grehawick, Jason Yeomans, David Haynes")
                 .build());
 
         MaterialAboutCard.Builder aboutCardBuilder = new MaterialAboutCard.Builder();
