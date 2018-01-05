@@ -6,12 +6,14 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.squareup.leakcanary.LeakCanary;
 
 import io.fabric.sdk.android.Fabric;
+import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -34,7 +36,11 @@ public class MyApplication extends Application {
 
         // Default Realm config. Might want to change this later
         Realm.init(this);
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder().build();
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder()
+                .name("default.realm")
+                .schemaVersion(0)
+                .migration(new Migration())
+                .build();
         Realm.setDefaultConfiguration(realmConfig);
     }
 
