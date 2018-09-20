@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -72,6 +73,10 @@ public class SettingsActivity extends AppCompatActivity {
                     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                         if(key.equals("turn_off_rotation_preference")) {
                             MyApplication.setRotation(SettingsActivity.this);
+                        }else if (key.equals("dark_theme")){
+                            boolean dark = prefs.getBoolean("dark_theme", false);
+                            String darkText = dark?"dark":"light";//TODO: remove this after you set the theme
+                            Log.e("Mike's log", "onSharedPreferenceChanged: " + darkText);
                         }
                     }
                 };
