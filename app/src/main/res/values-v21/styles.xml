@@ -14,4 +14,18 @@
 
     </style>
 
+    <!-- Dark theme when the dark button from the preferences settings screen is clicked,
+    the theme switches to this theme.-->
+    <style name="darkTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorControlHighlight">@color/tabButtonPressed</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_arrow_back_white</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="android:windowContentTransitions">true</item>
+
+    </style>
+
 </resources>
