@@ -42,7 +42,7 @@ import srct.whatsopen.presenters.FacilityPresenter;
 import srct.whatsopen.views.fragments.NotificationDialogFragment;
 
 
-public class DetailActivity extends AppCompatActivity implements FacilityView,
+public class DetailActivity extends BaseThemeActivity implements FacilityView,
         NotificationDialogFragment.NotificationDialogListener {
 
     @BindView(R.id.open_status)

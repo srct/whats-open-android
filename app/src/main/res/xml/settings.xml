@@ -18,7 +18,7 @@
             android:entryValues="@array/entryvalues_list_view_default_tab_preference" />
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="dark_theme"
             android:title="@string/title_dark_theme"
             android:entries="@array/entries_list_view_default_tab_preference"

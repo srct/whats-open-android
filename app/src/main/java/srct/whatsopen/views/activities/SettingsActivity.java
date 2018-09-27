@@ -16,7 +16,7 @@ import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 import srct.whatsopen.views.fragments.SettingsFragment;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseThemeActivity {
 
     private SharedPreferences mSharedPreferences;
 
@@ -75,17 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
                             MyApplication.setRotation(SettingsActivity.this);
                         }else if (key.equals("dark_theme")){
                             boolean dark = prefs.getBoolean("dark_theme", false);
-                            // look at the udacity course. In this section you might want to reload,
-                            // but this would mean every activity would have to set the right theme
 
-                            /*
-                            if(dark){
-                                setTheme(R.style.darkTheme);
-                            }else{
-                                setTheme(R.style.AppTheme);
-                            }
-                            */
-                            
                             String darkText = dark?"dark":"light";//TODO: remove this after you set the theme
                             Log.e("Mike's log", "onSharedPreferenceChanged: " + darkText);
                             finish();
