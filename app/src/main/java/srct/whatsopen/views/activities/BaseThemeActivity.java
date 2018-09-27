@@ -17,10 +17,10 @@ public abstract class BaseThemeActivity extends AppCompatActivity {
         // but this would mean every activity would have to set the right theme
 
         if(dark){
-            //setTheme(R.style.darkTheme);
+            setTheme(R.style.darkTheme);
             Log.e("Mike's log", "BaseThemeActivity: dark");
         }else{
-            //setTheme(R.style.AppTheme);
+            setTheme(R.style.AppTheme);
             Log.e("Mike's log", "BaseThemeActivity: light");
         }
         super.onCreate(bundle);
