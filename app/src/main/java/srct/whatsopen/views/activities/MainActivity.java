@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.darkTheme);
         setContentView(R.layout.activity_main);
 
         // Bind them views
