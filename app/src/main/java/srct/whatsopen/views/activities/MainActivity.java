@@ -27,7 +27,7 @@ import srct.whatsopen.views.adapters.FacilityListAdapter;
 import srct.whatsopen.views.adapters.FacilityListFragmentPagerAdapter;
 import srct.whatsopen.views.fragments.FacilityListFragment;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends BaseThemeActivity implements MainView {
 
     @BindView(R.id.progress_bar)
     ProgressBar mProgressBar;

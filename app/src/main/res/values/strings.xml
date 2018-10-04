@@ -17,6 +17,7 @@
     <string name="title_turn_off_rotation">Turn off rotation</string>
     <string name="title_notification">Notifications</string>
     <string name="title_turn_off_vibrations">Turn off vibrations</string>
+    <string name="title_dark_theme">Dark theme</string>
     <string-array name="entries_list_view_information_preference">
         <item>Both</item>
         <item>Only for open Facilities</item>

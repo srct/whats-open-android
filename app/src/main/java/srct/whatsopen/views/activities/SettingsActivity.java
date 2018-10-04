@@ -1,5 +1,6 @@
 package srct.whatsopen.views.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,7 +17,7 @@ import srct.whatsopen.MyApplication;
 import srct.whatsopen.R;
 import srct.whatsopen.views.fragments.SettingsFragment;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseThemeActivity {
 
     private SharedPreferences mSharedPreferences;
 
@@ -72,6 +74,9 @@ public class SettingsActivity extends AppCompatActivity {
                     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                         if(key.equals("turn_off_rotation_preference")) {
                             MyApplication.setRotation(SettingsActivity.this);
+                        }else if (key.equals("dark_theme")){
+                            Log.d("SettingsActivity", ".onSharedPreferenceChanged: Button was clicked to reset Themes.");
+                            recreate();
                         }
                     }
                 };
