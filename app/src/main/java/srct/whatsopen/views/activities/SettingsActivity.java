@@ -1,5 +1,6 @@
 package srct.whatsopen.views.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -74,12 +75,8 @@ public class SettingsActivity extends BaseThemeActivity {
                         if(key.equals("turn_off_rotation_preference")) {
                             MyApplication.setRotation(SettingsActivity.this);
                         }else if (key.equals("dark_theme")){
-                            boolean dark = prefs.getBoolean("dark_theme", false);
-
-                            String darkText = dark?"dark":"light";//TODO: remove this after you set the theme
-                            Log.e("Mike's log", "onSharedPreferenceChanged: " + darkText);
-                            finish();
-
+                            Log.d("SettingsActivity", ".onSharedPreferenceChanged: Button was clicked to reset Themes.");
+                            recreate();
                         }
                     }
                 };
