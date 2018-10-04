@@ -29,14 +29,14 @@ public abstract class BaseThemeActivity extends AppCompatActivity {
         boolean dark = prefs.getBoolean("dark_theme", false);
         // look at the udacity course. In this section you might want to reload,
         // but this would mean every activity would have to set the right theme
-        Log.e("BaseThemeActivity", ".onCreate Recreate called?");
+        Log.d("BaseThemeActivity", ".onCreate Recreate called?");
 
         if(dark){
             setTheme(R.style.darkTheme);
             Log.d("BaseThemeActivity", ".onCreate() Theme is now dark");
         }else{
             setTheme(R.style.AppTheme);
-            Log.e("BaseThemeActivity", ".onCreate() Theme is now light");
+            Log.d("BaseThemeActivity", ".onCreate() Theme is now light");
         }
         super.onCreate(bundle);
     }
@@ -58,9 +58,9 @@ public abstract class BaseThemeActivity extends AppCompatActivity {
         }else if (actTheme == R.style.AppTheme && dark){
             Log.d("BaseThemeActivity", ".onStart calling recreate to set to dark");
             recreate();
-        }else{
-            super.onStart();
         }
+        super.onStart();
+
 
     }
 
